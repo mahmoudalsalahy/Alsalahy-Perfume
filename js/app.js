@@ -1,0 +1,462 @@
+/**
+ * app.js - Main Application Logic
+ * Initializes all modules and manages product data
+ */
+
+// Product Data
+const products = [
+  {
+    id: 1,
+    name_ar: "عود ملكي",
+    name_en: "Oud Royal",
+    desc_ar:
+      "عطر فاخر بنفحات العود الطبيعي الممزوج بالعنبر والمسك الأبيض، يمنحك حضوراً ملكياً لا يُنسى. تركيبة شرقية أصيلة تدوم طويلاً.",
+    desc_en:
+      "A luxurious fragrance with natural oud notes blended with amber and white musk, giving you an unforgettable royal presence.",
+    notes_ar: "العود • العنبر • المسك الأبيض • خشب الصندل",
+    notes_en: "Oud • Amber • White Musk • Sandalwood",
+    price: 350,
+    image: "images/product-1.png",
+    sizes: ["30ml", "50ml", "100ml"],
+    prices: { "30ml": 200, "50ml": 350, "100ml": 550 },
+  },
+  {
+    id: 2,
+    name_ar: "مسك فضي",
+    name_en: "Silver Musk",
+    desc_ar:
+      "مزيج أنيق من المسك الفاخر والزهور البيضاء مع لمسات من الفانيليا، عطر يعكس الأناقة والنقاء. مثالي للمناسبات الخاصة.",
+    desc_en:
+      "An elegant blend of premium musk and white flowers with touches of vanilla, a fragrance that reflects elegance and purity.",
+    notes_ar: "المسك • الزهور البيضاء • الفانيليا • الأرز",
+    notes_en: "Musk • White Flowers • Vanilla • Cedar",
+    price: 280,
+    image: "images/product-2.png",
+    sizes: ["30ml", "50ml", "100ml"],
+    prices: { "30ml": 160, "50ml": 280, "100ml": 450 },
+  },
+  {
+    id: 3,
+    name_ar: "وردة مخملية",
+    name_en: "Velvet Rose",
+    desc_ar:
+      "عطر ساحر يجمع بين الورد الدمشقي والعود الفاخر مع لمسة من التوت البري، تجربة عطرية فريدة تأسر الحواس.",
+    desc_en:
+      "A captivating fragrance that combines Damascene rose with premium oud and a touch of berry, a unique olfactory experience.",
+    notes_ar: "الورد الدمشقي • العود • التوت البري • الباتشولي",
+    notes_en: "Damascene Rose • Oud • Berry • Patchouli",
+    price: 320,
+    image: "images/product-3.png",
+    sizes: ["30ml", "50ml", "100ml"],
+    prices: { "30ml": 180, "50ml": 320, "100ml": 500 },
+  },
+];
+
+// ===== App Initialization =====
+document.addEventListener("DOMContentLoaded", () => {
+  // Init modules
+  i18n.init();
+  notificationSystem.init();
+  cart.init();
+  auth.init();
+  animations.init();
+
+  // Setup event listeners
+  setupNavigation();
+  setupLanguageToggle();
+  setupCartDrawer();
+  setupAuthModal();
+  setupProductCards();
+  setupOrderModal();
+  setupContactForm();
+  setupMobileMenu();
+
+  // Page load animation
+  document.body.classList.add("loaded");
+
+  // Setup product tilt after a short delay
+  setTimeout(() => animations.setupProductTilt(), 500);
+});
+
+// ===== Navigation =====
+function setupNavigation() {
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll("section[id]");
+  window.addEventListener("scroll", () => {
+    const scrollY = window.scrollY + 100;
+    sections.forEach((section) => {
+      const top = section.offsetTop;
+      const height = section.offsetHeight;
+      const id = section.getAttribute("id");
+      const link = document.querySelector(`.nav-link[href="#${id}"]`);
+      if (link) {
+        if (scrollY >= top && scrollY < top + height) {
+          link.classList.add("nav-active");
+        } else {
+          link.classList.remove("nav-active");
+        }
+      }
+    });
+  });
+}
+
+// ===== Language Toggle =====
+function setupLanguageToggle() {
+  const toggleBtn = document.getElementById("lang-toggle");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      // Add transition class
+      document.body.classList.add("lang-transitioning");
+      setTimeout(() => {
+        i18n.toggleLanguage();
+        // Re-render dynamic content
+        updateDynamicContent();
+        setTimeout(() => {
+          document.body.classList.remove("lang-transitioning");
+        }, 300);
+      }, 150);
+    });
+  }
+}
+
+function updateDynamicContent() {
+  // Re-render product cards
+  renderProducts();
+  // Re-render cart if open
+  if (cart.isOpen) cart.renderCartItems();
+  // Update auth UI
+  auth.updateUI();
+}
+
+// ===== Product Cards =====
+function renderProducts() {
+  const container = document.getElementById("products-grid");
+  if (!container) return;
+  const lang = i18n.getCurrentLang();
+
+  container.innerHTML = products
+    .map(
+      (product, index) => `
+    <div class="product-card reveal-on-scroll" style="animation-delay: ${index * 0.15}s">
+      <div class="product-image-wrapper">
+        <img src="${product.image}" alt="${lang === "ar" ? product.name_ar : product.name_en}" class="product-image" loading="lazy">
+        <div class="product-overlay">
+          <button class="btn-product-detail ripple-btn" onclick="openProductModal(${product.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>${i18n.t("product_details")}</span>
+          </button>
+        </div>
+      </div>
+      <div class="product-info">
+        <h3 class="product-name">${lang === "ar" ? product.name_ar : product.name_en}</h3>
+        <p class="product-notes">${lang === "ar" ? product.notes_ar : product.notes_en}</p>
+        <div class="product-bottom">
+          <span class="product-price-tag">${product.price} <small>${i18n.t("product_currency")}</small></span>
+          <button class="btn-add-cart ripple-btn" onclick="addToCart(${product.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+            <span>${i18n.t("product_add_cart")}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `
+    )
+    .join("");
+
+  // Re-observe new elements and re-setup tilt
+  document.querySelectorAll(".product-card.reveal-on-scroll").forEach((el) => {
+    if (animations.observer) animations.observer.observe(el);
+  });
+  animations.setupProductTilt();
+}
+
+function setupProductCards() {
+  renderProducts();
+}
+
+// ===== Add to Cart =====
+function addToCart(productId, size = "50ml") {
+  const product = products.find((p) => p.id === productId);
+  if (!product) return;
+
+  const price = product.prices[size] || product.price;
+  cart.addItem({ ...product, price }, size);
+}
+
+// ===== Product Detail Modal =====
+function openProductModal(productId) {
+  const product = products.find((p) => p.id === productId);
+  if (!product) return;
+
+  const lang = i18n.getCurrentLang();
+  const modal = document.getElementById("product-modal");
+  const overlay = document.getElementById("product-overlay");
+
+  document.getElementById("modal-product-image").src = product.image;
+  document.getElementById("modal-product-name").textContent =
+    lang === "ar" ? product.name_ar : product.name_en;
+  document.getElementById("modal-product-desc").textContent =
+    lang === "ar" ? product.desc_ar : product.desc_en;
+  document.getElementById("modal-product-notes").textContent =
+    lang === "ar" ? product.notes_ar : product.notes_en;
+
+  // Size selector
+  const sizeContainer = document.getElementById("modal-size-selector");
+  sizeContainer.innerHTML = product.sizes
+    .map(
+      (s, i) => `
+    <button class="size-btn ${i === 1 ? "active" : ""}" data-size="${s}" data-price="${product.prices[s]}" onclick="selectSize(this, ${product.id})">
+      ${s}
+    </button>
+  `
+    )
+    .join("");
+
+  // Price
+  document.getElementById("modal-product-price").textContent = `${product.price} ${i18n.t("product_currency")}`;
+
+  // Reset quantity
+  document.getElementById("modal-quantity").textContent = "1";
+
+  modal.classList.add("modal-open");
+  overlay.classList.add("overlay-visible");
+  document.body.style.overflow = "hidden";
+}
+
+function closeProductModal() {
+  const modal = document.getElementById("product-modal");
+  const overlay = document.getElementById("product-overlay");
+  modal.classList.remove("modal-open");
+  overlay.classList.remove("overlay-visible");
+  document.body.style.overflow = "";
+}
+
+function selectSize(btn, productId) {
+  const product = products.find((p) => p.id === productId);
+  if (!product) return;
+
+  document.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+
+  const price = btn.dataset.price;
+  document.getElementById("modal-product-price").textContent = `${price} ${i18n.t("product_currency")}`;
+}
+
+function changeModalQuantity(delta) {
+  const el = document.getElementById("modal-quantity");
+  let qty = parseInt(el.textContent) + delta;
+  if (qty < 1) qty = 1;
+  if (qty > 10) qty = 10;
+  el.textContent = qty;
+}
+
+function addToCartFromModal() {
+  const activeSize = document.querySelector(".size-btn.active");
+  const size = activeSize ? activeSize.dataset.size : "50ml";
+  const price = activeSize ? parseInt(activeSize.dataset.price) : 350;
+  const qty = parseInt(document.getElementById("modal-quantity").textContent);
+  const productName = document.getElementById("modal-product-name").textContent;
+
+  // Find product by name
+  const lang = i18n.getCurrentLang();
+  const product = products.find(
+    (p) => (lang === "ar" ? p.name_ar : p.name_en) === productName
+  );
+
+  if (product) {
+    cart.addItem({ ...product, price }, size, qty);
+    closeProductModal();
+  }
+}
+
+// ===== Cart Drawer =====
+function setupCartDrawer() {
+  const cartBtn = document.getElementById("cart-icon-btn");
+  const closeBtn = document.getElementById("cart-close-btn");
+  const overlay = document.getElementById("cart-overlay");
+  const clearBtn = document.getElementById("cart-clear-btn");
+  const checkoutBtn = document.getElementById("cart-checkout-btn");
+  const continueBtn = document.getElementById("cart-continue-btn");
+
+  cartBtn?.addEventListener("click", () => cart.toggleDrawer());
+  closeBtn?.addEventListener("click", () => cart.toggleDrawer());
+  overlay?.addEventListener("click", () => {
+    if (cart.isOpen) cart.toggleDrawer();
+  });
+  clearBtn?.addEventListener("click", () => cart.clearCart());
+  checkoutBtn?.addEventListener("click", () => {
+    cart.toggleDrawer();
+    openOrderModal();
+  });
+  continueBtn?.addEventListener("click", () => cart.toggleDrawer());
+}
+
+// ===== Order Modal =====
+function setupOrderModal() {
+  const cancelBtn = document.getElementById("order-cancel-btn");
+  const overlay = document.getElementById("order-overlay");
+
+  cancelBtn?.addEventListener("click", closeOrderModal);
+  overlay?.addEventListener("click", closeOrderModal);
+
+  const form = document.getElementById("order-form");
+  form?.addEventListener("submit", handleOrderSubmit);
+}
+
+function openOrderModal() {
+  if (cart.items.length === 0) {
+    notificationSystem.warning(i18n.t("notif_cart_empty_order"));
+    return;
+  }
+
+  const modal = document.getElementById("order-modal");
+  const overlay = document.getElementById("order-overlay");
+
+  // Render order summary
+  const summaryContainer = document.getElementById("order-summary-items");
+  const lang = i18n.getCurrentLang();
+
+  summaryContainer.innerHTML = cart.items
+    .map(
+      (item) => `
+    <div class="order-summary-item">
+      <span>${lang === "ar" ? item.name_ar : item.name_en} × ${item.quantity}</span>
+      <span>${item.price * item.quantity} ${i18n.t("product_currency")}</span>
+    </div>
+  `
+    )
+    .join("");
+
+  document.getElementById("order-total-amount").textContent = `${cart.getTotal()} ${i18n.t("product_currency")}`;
+
+  // Pre-fill if logged in
+  if (auth.isLoggedIn()) {
+    document.getElementById("order-name").value = auth.currentUser.name || "";
+    document.getElementById("order-phone").value = auth.currentUser.phone || "";
+  }
+
+  modal.classList.add("modal-open");
+  overlay.classList.add("overlay-visible");
+  document.body.style.overflow = "hidden";
+}
+
+function closeOrderModal() {
+  const modal = document.getElementById("order-modal");
+  const overlay = document.getElementById("order-overlay");
+  const successView = document.getElementById("order-success");
+  const formView = document.getElementById("order-form-view");
+
+  modal.classList.remove("modal-open");
+  overlay.classList.remove("overlay-visible");
+  document.body.style.overflow = "";
+
+  // Reset views
+  setTimeout(() => {
+    if (successView) successView.style.display = "none";
+    if (formView) formView.style.display = "block";
+  }, 300);
+}
+
+function handleOrderSubmit(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("order-name").value.trim();
+  const phone = document.getElementById("order-phone").value.trim();
+  const address = document.getElementById("order-address").value.trim();
+  const city = document.getElementById("order-city").value.trim();
+
+  if (!name || !phone || !address || !city) {
+    notificationSystem.warning(i18n.t("notif_fill_fields"));
+    return;
+  }
+
+  // Show success
+  const successView = document.getElementById("order-success");
+  const formView = document.getElementById("order-form-view");
+
+  formView.style.display = "none";
+  successView.style.display = "flex";
+
+  // Animate checkmark
+  setTimeout(() => {
+    successView.querySelector(".success-checkmark")?.classList.add("animate");
+  }, 100);
+
+  // Clear cart and notify
+  cart.items = [];
+  cart.saveToStorage();
+  cart.updateBadge();
+  notificationSystem.success(i18n.t("notif_order_placed"));
+
+  // Reset form
+  document.getElementById("order-form").reset();
+}
+
+// ===== Auth Modal =====
+function setupAuthModal() {
+  const loginBtn = document.getElementById("auth-login-btn");
+  const overlay = document.getElementById("auth-overlay");
+  const closeBtn = document.getElementById("auth-close-btn");
+  const loginTabBtn = document.getElementById("login-tab-btn");
+  const registerTabBtn = document.getElementById("register-tab-btn");
+  const loginForm = document.getElementById("login-form");
+  const registerForm = document.getElementById("register-form");
+  const googleLoginBtn = document.getElementById("google-login-btn");
+  const googleRegisterBtn = document.getElementById("google-register-btn");
+  const logoutBtn = document.getElementById("logout-btn");
+  const switchToRegister = document.getElementById("switch-to-register");
+  const switchToLogin = document.getElementById("switch-to-login");
+
+  loginBtn?.addEventListener("click", () => auth.openModal("login"));
+  overlay?.addEventListener("click", () => auth.closeModal());
+  closeBtn?.addEventListener("click", () => auth.closeModal());
+
+  loginTabBtn?.addEventListener("click", () => auth.switchTab("login"));
+  registerTabBtn?.addEventListener("click", () => auth.switchTab("register"));
+
+  loginForm?.addEventListener("submit", (e) => auth.handleLoginSubmit(e));
+  registerForm?.addEventListener("submit", (e) => auth.handleRegisterSubmit(e));
+
+  googleLoginBtn?.addEventListener("click", () => auth.loginWithGoogle());
+  googleRegisterBtn?.addEventListener("click", () => auth.loginWithGoogle());
+
+  logoutBtn?.addEventListener("click", () => auth.logout());
+
+  switchToRegister?.addEventListener("click", (e) => {
+    e.preventDefault();
+    auth.switchTab("register");
+  });
+  switchToLogin?.addEventListener("click", (e) => {
+    e.preventDefault();
+    auth.switchTab("login");
+  });
+}
+
+// ===== Contact Form =====
+function setupContactForm() {
+  const form = document.getElementById("contact-form");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    notificationSystem.success(i18n.t("notif_contact_sent"));
+    form.reset();
+  });
+}
+
+// ===== Mobile Menu =====
+function setupMobileMenu() {
+  const hamburger = document.getElementById("hamburger");
+  const mobileMenu = document.getElementById("mobile-menu");
+
+  hamburger?.addEventListener("click", () => {
+    hamburger.classList.toggle("active");
+    mobileMenu.classList.toggle("mobile-menu-open");
+  });
+
+  // Close menu on link click
+  mobileMenu?.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", () => {
+      hamburger.classList.remove("active");
+      mobileMenu.classList.remove("mobile-menu-open");
+    });
+  });
+}

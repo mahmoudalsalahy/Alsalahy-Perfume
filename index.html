@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="الصلاحي للعطور - عطور فاخرة مصنوعة بعناية من أجود المكونات الطبيعية | ALSALAHY PERFUME - Premium luxury fragrances">
+  <meta name="keywords" content="عطور, perfume, الصلاحي, ALSALAHY, عود, مسك, ورد, luxury fragrance">
+  <title>الصلاحي للعطور | ALSALAHY PERFUME</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+
+  <!-- ============ HEADER ============ -->
+  <header class="main-header" id="main-header">
+    <div class="container header-inner">
+      <!-- Logo -->
+      <a href="#hero" class="logo">
+        <img src="images/logo.png" alt="ALSALAHY PERFUME">
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-desktop">
+        <a href="#hero" class="nav-link" data-i18n="nav_home">الرئيسية</a>
+        <a href="#products" class="nav-link" data-i18n="nav_products">العطور</a>
+        <a href="#about" class="nav-link" data-i18n="nav_about">من نحن</a>
+        <a href="#contact" class="nav-link" data-i18n="nav_contact">تواصل معنا</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <button class="lang-toggle-btn" id="lang-toggle" data-i18n="lang_toggle">EN</button>
+
+        <!-- Cart -->
+        <button class="icon-btn" id="cart-icon-btn" aria-label="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          <span class="cart-badge" id="cart-badge">0</span>
+        </button>
+
+        <!-- Auth Login Button -->
+        <button class="icon-btn" id="auth-login-btn" aria-label="Login">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+
+        <!-- User Menu (shown when logged in) -->
+        <div class="user-menu" id="user-menu">
+          <span class="user-name" id="user-name"></span>
+          <button id="logout-btn" data-i18n="nav_logout">تسجيل الخروج</button>
+        </div>
+
+        <!-- Hamburger (mobile) -->
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#hero" class="nav-link" data-i18n="nav_home">الرئيسية</a>
+    <a href="#products" class="nav-link" data-i18n="nav_products">العطور</a>
+    <a href="#about" class="nav-link" data-i18n="nav_about">من نحن</a>
+    <a href="#contact" class="nav-link" data-i18n="nav_contact">تواصل معنا</a>
+  </div>
+
+  <!-- ============ HERO SECTION ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <img src="images/hero-bg.png" alt="Background">
+    </div>
+    <canvas id="particle-canvas"></canvas>
+    <div class="hero-content">
+      <img src="images/logo.png" alt="ALSALAHY PERFUME" class="hero-logo">
+      <h1 class="hero-title" data-i18n="hero_title">الصلاحي للعطور</h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">عطور فاخرة تحكي قصتك</p>
+      <p class="hero-tagline" id="hero-tagline"></p>
+      <a href="#products" class="btn-hero ripple-btn" data-i18n="hero_cta">تسوق الآن</a>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- Gold Separator -->
+  <div class="gold-separator"></div>
+
+  <!-- ============ PRODUCTS SECTION ============ -->
+  <section class="section products-section" id="products">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title" data-i18n="products_title">مجموعتنا المميزة</h2>
+        <p class="section-subtitle" data-i18n="products_subtitle">عطور فاخرة مصنوعة بعناية من أجود المكونات</p>
+      </div>
+      <div class="products-grid" id="products-grid">
+        <!-- Products rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold Separator -->
+  <div class="gold-separator"></div>
+
+  <!-- ============ ABOUT SECTION ============ -->
+  <section class="section about-section" id="about">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title" data-i18n="about_title">من نحن</h2>
+      </div>
+      <div class="about-content reveal-on-scroll">
+        <p class="about-text" data-i18n="about_text_1">الصلاحي للعطور هو علامة تجارية مصرية متخصصة في صناعة العطور الفاخرة. نؤمن بأن العطر هو الانطباع الأول الذي يدوم.</p>
+        <p class="about-text" data-i18n="about_text_2">نختار بعناية أجود المكونات الطبيعية من جميع أنحاء العالم لنصنع لك عطوراً تحكي قصتك وتعكس شخصيتك الفريدة.</p>
+      </div>
+      <div class="about-features">
+        <div class="about-feature reveal-on-scroll">
+          <div class="about-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 data-i18n="about_quality">جودة فائقة</h3>
+          <p data-i18n="about_quality_desc">مكونات طبيعية 100% مختارة بعناية</p>
+        </div>
+        <div class="about-feature reveal-on-scroll">
+          <div class="about-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+          </div>
+          <h3 data-i18n="about_crafted">صناعة يدوية</h3>
+          <p data-i18n="about_crafted_desc">كل عطر يُصنع بعناية فائقة</p>
+        </div>
+        <div class="about-feature reveal-on-scroll">
+          <div class="about-feature-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <h3 data-i18n="about_lasting">ثبات يدوم</h3>
+          <p data-i18n="about_lasting_desc">تركيبات مركزة تدوم طوال اليوم</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold Separator -->
+  <div class="gold-separator"></div>
+
+  <!-- ============ CONTACT SECTION ============ -->
+  <section class="section contact-section" id="contact">
+    <div class="container">
+      <div class="section-header reveal-on-scroll">
+        <h2 class="section-title" data-i18n="contact_title">تواصل معنا</h2>
+        <p class="section-subtitle" data-i18n="contact_subtitle">نسعد بتواصلكم</p>
+      </div>
+      <div class="contact-grid">
+        <form class="contact-form reveal-on-scroll" id="contact-form">
+          <input type="text" class="contact-input" data-i18n="contact_name" placeholder="الاسم" required>
+          <input type="email" class="contact-input" data-i18n="contact_email" placeholder="البريد الإلكتروني" required>
+          <textarea class="contact-input" data-i18n="contact_message" placeholder="الرسالة" required></textarea>
+          <button type="submit" class="btn-contact-submit ripple-btn" data-i18n="contact_send">إرسال</button>
+        </form>
+        <div class="contact-info reveal-on-scroll">
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div>
+              <div class="contact-info-label" data-i18n="contact_phone_label">الهاتف</div>
+              <div class="contact-info-value" data-i18n="contact_phone_val">+20 123 456 7890</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="contact-info-label" data-i18n="contact_email_label">البريد</div>
+              <div class="contact-info-value" data-i18n="contact_email_val">info@alsalahyperfume.com</div>
+            </div>
+          </div>
+          <div class="contact-info-item">
+            <div class="contact-info-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="contact-info-label" data-i18n="contact_address_label">العنوان</div>
+              <div class="contact-info-value" data-i18n="contact_address_val">القاهرة، مصر</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <img src="images/logo.png" alt="ALSALAHY PERFUME" class="footer-brand-logo">
+          <p class="footer-brand-desc" data-i18n="footer_desc">عطور فاخرة مصنوعة بعناية من أجود المكونات الطبيعية</p>
+        </div>
+        <div>
+          <h4 class="footer-title" data-i18n="footer_links">روابط سريعة</h4>
+          <div class="footer-links">
+            <a href="#hero" data-i18n="nav_home">الرئيسية</a>
+            <a href="#products" data-i18n="nav_products">العطور</a>
+            <a href="#about" data-i18n="nav_about">من نحن</a>
+            <a href="#contact" data-i18n="nav_contact">تواصل معنا</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-title" data-i18n="footer_contact">تواصل معنا</h4>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            <span data-i18n="contact_phone_val">+20 123 456 7890</span>
+          </div>
+          <div class="footer-contact-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <span data-i18n="contact_email_val">info@alsalahyperfume.com</span>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-title" data-i18n="footer_social">تابعنا</h4>
+          <div class="footer-social">
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" aria-label="Twitter">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.88-2.88 2.89 2.89 0 012.88-2.88c.28 0 .56.04.81.12v-3.49a6.37 6.37 0 00-.81-.05A6.34 6.34 0 003.15 15.4a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V9.16a8.16 8.16 0 004.76 1.53v-3.44a4.85 4.85 0 01-1-.56z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">
+          © 2026 <span class="brand-name">ALSALAHY PERFUME</span>. <span data-i18n="footer_rights">جميع الحقوق محفوظة</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ CART DRAWER ============ -->
+  <div class="modal-overlay" id="cart-overlay"></div>
+  <div class="cart-drawer" id="cart-drawer">
+    <div class="cart-drawer-header">
+      <div class="cart-drawer-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <span data-i18n="cart_title">سلة التسوق</span>
+      </div>
+      <button class="cart-close-btn" id="cart-close-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Empty State -->
+    <div class="cart-empty-state" id="cart-empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+      <h3 class="cart-empty-title" data-i18n="cart_empty">سلتك فارغة</h3>
+      <p class="cart-empty-msg" data-i18n="cart_empty_msg">لم تقم بإضافة أي منتجات بعد</p>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="cart-content" id="cart-content">
+      <div class="cart-items-container" id="cart-items-container"></div>
+      <div class="cart-footer">
+        <div class="cart-total-row">
+          <span class="cart-total-label" data-i18n="cart_total">الإجمالي</span>
+          <span class="cart-total-amount" id="cart-total-amount">0 ج.م</span>
+        </div>
+        <div class="cart-footer-btns">
+          <button class="btn-checkout ripple-btn" id="cart-checkout-btn" data-i18n="cart_checkout">إتمام الطلب</button>
+          <div class="btn-cart-secondary">
+            <button class="btn-clear-cart" id="cart-clear-btn" data-i18n="cart_clear">مسح السلة</button>
+            <button class="btn-continue" id="cart-continue-btn" data-i18n="cart_continue">متابعة التسوق</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PRODUCT DETAIL MODAL ============ -->
+  <div class="modal-overlay" id="product-overlay" onclick="closeProductModal()"></div>
+  <div class="product-modal" id="product-modal">
+    <button class="modal-close-btn" onclick="closeProductModal()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <img src="" alt="" class="modal-product-image" id="modal-product-image">
+    <div class="modal-product-body">
+      <h2 class="modal-product-name" id="modal-product-name"></h2>
+      <p class="modal-product-desc" id="modal-product-desc"></p>
+      <p class="modal-product-notes-label" data-i18n="product_1_notes">المكونات</p>
+      <p class="modal-product-notes" id="modal-product-notes"></p>
+
+      <!-- Size Selector -->
+      <div class="size-selector">
+        <p class="size-selector-label" data-i18n="product_size">الحجم</p>
+        <div class="size-buttons" id="modal-size-selector"></div>
+      </div>
+
+      <!-- Quantity & Price -->
+      <div class="modal-quantity-row">
+        <div>
+          <p class="size-selector-label" data-i18n="product_quantity">الكمية</p>
+          <div class="quantity-controls">
+            <button class="qty-btn" onclick="changeModalQuantity(-1)">−</button>
+            <span class="qty-value" id="modal-quantity">1</span>
+            <button class="qty-btn" onclick="changeModalQuantity(1)">+</button>
+          </div>
+        </div>
+        <div class="modal-price" id="modal-product-price"></div>
+      </div>
+
+      <!-- Add to Cart -->
+      <button class="modal-add-cart-btn ripple-btn" onclick="addToCartFromModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        <span data-i18n="product_add_cart">أضف للسلة</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============ ORDER MODAL ============ -->
+  <div class="modal-overlay" id="order-overlay"></div>
+  <div class="order-modal" id="order-modal">
+    <div id="order-form-view">
+      <h2 class="order-modal-title" data-i18n="order_title">إتمام الطلب</h2>
+      <form id="order-form">
+        <div class="order-form-group">
+          <label data-i18n="order_name">الاسم الكامل</label>
+          <input type="text" class="order-input" id="order-name" data-i18n="order_name" placeholder="الاسم الكامل" required>
+        </div>
+        <div class="order-form-group">
+          <label data-i18n="order_phone">رقم الهاتف</label>
+          <input type="tel" class="order-input" id="order-phone" data-i18n="order_phone" placeholder="رقم الهاتف" required>
+        </div>
+        <div class="order-form-group">
+          <label data-i18n="order_address">العنوان</label>
+          <input type="text" class="order-input" id="order-address" data-i18n="order_address" placeholder="العنوان" required>
+        </div>
+        <div class="order-form-group">
+          <label data-i18n="order_city">المدينة</label>
+          <input type="text" class="order-input" id="order-city" data-i18n="order_city" placeholder="المدينة" required>
+        </div>
+        <div class="order-form-group">
+          <label data-i18n="order_notes">ملاحظات إضافية</label>
+          <textarea class="order-input" id="order-notes" data-i18n="order_notes" placeholder="ملاحظات إضافية"></textarea>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <h4 class="order-summary-title" data-i18n="order_summary">ملخص الطلب</h4>
+          <div id="order-summary-items"></div>
+          <div class="order-summary-total">
+            <span data-i18n="cart_total">الإجمالي</span>
+            <span id="order-total-amount">0 ج.م</span>
+          </div>
+        </div>
+
+        <div class="order-form-btns">
+          <button type="submit" class="btn-order-submit ripple-btn" data-i18n="order_submit">تأكيد الطلب</button>
+          <button type="button" class="btn-order-cancel" id="order-cancel-btn" data-i18n="order_cancel">إلغاء</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Success View -->
+    <div class="order-success" id="order-success">
+      <div class="success-checkmark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h3 data-i18n="order_success_title">تم تأكيد طلبك!</h3>
+      <p data-i18n="order_success_msg">شكراً لك! سيتم التواصل معك قريباً لتأكيد الطلب.</p>
+      <button class="btn-back-home ripple-btn" onclick="closeOrderModal(); window.scrollTo({top:0, behavior:'smooth'})" data-i18n="order_back_home">العودة للرئيسية</button>
+    </div>
+  </div>
+
+  <!-- ============ AUTH MODAL ============ -->
+  <div class="modal-overlay" id="auth-overlay"></div>
+  <div class="auth-modal" id="auth-modal">
+    <button class="modal-close-btn" id="auth-close-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    <div class="auth-modal-header">
+      <img src="images/logo.png" alt="ALSALAHY" class="auth-modal-logo">
+    </div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" id="login-tab-btn" data-i18n="auth_login_title">تسجيل الدخول</button>
+      <button class="auth-tab-btn" id="register-tab-btn" data-i18n="auth_register_title">إنشاء حساب جديد</button>
+    </div>
+
+    <!-- Login Form -->
+    <form class="auth-form active" id="login-form">
+      <div class="auth-form-group">
+        <label data-i18n="auth_email">البريد الإلكتروني</label>
+        <input type="email" class="auth-input" id="login-email" data-i18n="auth_email" placeholder="البريد الإلكتروني" required>
+      </div>
+      <div class="auth-form-group">
+        <label data-i18n="auth_password">كلمة المرور</label>
+        <input type="password" class="auth-input" id="login-password" data-i18n="auth_password" placeholder="كلمة المرور" required>
+      </div>
+      <div class="auth-forgot">
+        <a data-i18n="auth_forgot">نسيت كلمة المرور؟</a>
+      </div>
+      <button type="submit" class="btn-auth-submit ripple-btn" data-i18n="auth_login_btn">تسجيل الدخول</button>
+
+      <div class="auth-divider">
+        <span data-i18n="auth_or">أو</span>
+      </div>
+
+      <button type="button" class="btn-google" id="google-login-btn">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 001 12c0 1.77.43 3.44 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span data-i18n="auth_google">المتابعة مع جوجل</span>
+      </button>
+
+      <div class="auth-switch">
+        <span data-i18n="auth_no_account">ليس لديك حساب؟</span>
+        <a id="switch-to-register" data-i18n="auth_register_btn">إنشاء حساب</a>
+      </div>
+    </form>
+
+    <!-- Register Form -->
+    <form class="auth-form" id="register-form">
+      <div class="auth-form-group">
+        <label data-i18n="auth_name">الاسم الكامل</label>
+        <input type="text" class="auth-input" id="register-name" data-i18n="auth_name" placeholder="الاسم الكامل" required>
+      </div>
+      <div class="auth-form-group">
+        <label data-i18n="auth_email">البريد الإلكتروني</label>
+        <input type="email" class="auth-input" id="register-email" data-i18n="auth_email" placeholder="البريد الإلكتروني" required>
+      </div>
+      <div class="auth-form-group">
+        <label data-i18n="auth_phone">رقم الهاتف</label>
+        <input type="tel" class="auth-input" id="register-phone" data-i18n="auth_phone" placeholder="رقم الهاتف">
+      </div>
+      <div class="auth-form-group">
+        <label data-i18n="auth_password">كلمة المرور</label>
+        <input type="password" class="auth-input" id="register-password" data-i18n="auth_password" placeholder="كلمة المرور" required>
+      </div>
+      <div class="auth-form-group">
+        <label data-i18n="auth_confirm_password">تأكيد كلمة المرور</label>
+        <input type="password" class="auth-input" id="register-confirm-password" data-i18n="auth_confirm_password" placeholder="تأكيد كلمة المرور" required>
+      </div>
+      <button type="submit" class="btn-auth-submit ripple-btn" data-i18n="auth_register_btn">إنشاء حساب</button>
+
+      <div class="auth-divider">
+        <span data-i18n="auth_or">أو</span>
+      </div>
+
+      <button type="button" class="btn-google" id="google-register-btn">
+        <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18A10.96 10.96 0 001 12c0 1.77.43 3.44 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        <span data-i18n="auth_google">المتابعة مع جوجل</span>
+      </button>
+
+      <div class="auth-switch">
+        <span data-i18n="auth_have_account">لديك حساب بالفعل؟</span>
+        <a id="switch-to-login" data-i18n="auth_login_btn">تسجيل الدخول</a>
+      </div>
+    </form>
+  </div>
+
+  <!-- ============ SCROLL TO TOP ============ -->
+  <button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- ============ SCRIPTS ============ -->
+  <script src="js/i18n.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
