@@ -6,7 +6,7 @@ import { generateToken } from '../middleware/auth.js';
 const router = Router();
 
 // POST /api/auth/register
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   try {
     const { name, email, phone, password } = req.body;
 
@@ -14,13 +14,13 @@ router.post('/register', (req, res) => {
       return res.status(400).json({ error: 'Name, email, and password are required' });
     }
 
-    const existing = dbGet('SELECT id FROM users WHERE email = ?', [email]);
+    const existing = await dbGet('SELECT id FROM users WHERE email = ?', [email]);
     if (existing) {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
     const password_hash = bcrypt.hashSync(password, 10);
-    const result = dbRun(
+    const result = await dbRun(
       'INSERT INTO users (name, email, phone, password_hash) VALUES (?, ?, ?, ?)',
       [name, email, phone || '', password_hash]
     );
@@ -36,7 +36,7 @@ router.post('/register', (req, res) => {
 });
 
 // POST /api/auth/login
-router.post('/login', (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -44,7 +44,7 @@ router.post('/login', (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const user = dbGet('SELECT * FROM users WHERE email = ?', [email]);
+    const user = await dbGet('SELECT * FROM users WHERE email = ?', [email]);
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -67,13 +67,13 @@ router.post('/login', (req, res) => {
 });
 
 // POST /api/auth/google (simulated)
-router.post('/google', (req, res) => {
+router.post('/google', async (req, res) => {
   try {
     const name = 'Google User';
     const email = `google_${Date.now()}@gmail.com`;
     const password_hash = bcrypt.hashSync('google-auth', 10);
 
-    const result = dbRun(
+    const result = await dbRun(
       'INSERT INTO users (name, email, phone, password_hash) VALUES (?, ?, ?, ?)',
       [name, email, '', password_hash]
     );

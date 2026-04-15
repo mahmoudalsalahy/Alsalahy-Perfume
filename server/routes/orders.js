@@ -5,7 +5,7 @@ import { authenticateToken } from '../middleware/auth.js';
 const router = Router();
 
 // POST /api/orders
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { customer_name, phone, address, city, notes, items, user_id } = req.body;
 
@@ -15,7 +15,7 @@ router.post('/', (req, res) => {
 
     const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    const orderResult = dbRun(
+    const orderResult = await dbRun(
       'INSERT INTO orders (user_id, customer_name, phone, address, city, notes, total) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [user_id || null, customer_name, phone, address, city, notes || '', total]
     );
@@ -23,7 +23,7 @@ router.post('/', (req, res) => {
     const orderId = orderResult.lastInsertRowid;
 
     for (const item of items) {
-      dbRun(
+      await dbRun(
         'INSERT INTO order_items (order_id, product_id, size, quantity, price) VALUES (?, ?, ?, ?, ?)',
         [orderId, item.product_id, item.size, item.quantity, item.price]
       );
@@ -37,12 +37,12 @@ router.post('/', (req, res) => {
 });
 
 // GET /api/orders/my
-router.get('/my', authenticateToken, (req, res) => {
+router.get('/my', authenticateToken, async (req, res) => {
   try {
-    const orders = dbAll('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC', [req.user.id]);
+    const orders = await dbAll('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC', [req.user.id]);
     
     for (const order of orders) {
-      order.items = dbAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
+      order.items = await dbAll('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
     }
 
     res.json(orders);

@@ -4,9 +4,9 @@ import { dbAll, dbGet } from '../db/database.js';
 const router = Router();
 
 // GET /api/products
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const products = dbAll('SELECT * FROM products');
+    const products = await dbAll('SELECT * FROM products');
     res.json(products);
   } catch (err) {
     console.error('Products error:', err);
@@ -15,9 +15,9 @@ router.get('/', (req, res) => {
 });
 
 // GET /api/products/:id
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const product = dbGet('SELECT * FROM products WHERE id = ?', [Number(req.params.id)]);
+    const product = await dbGet('SELECT * FROM products WHERE id = ?', [Number(req.params.id)]);
     if (!product) {
       return res.status(404).json({ error: 'Product not found' });
     }
