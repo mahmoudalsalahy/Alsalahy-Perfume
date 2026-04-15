@@ -6,6 +6,8 @@ services:
       - "5000:5000"
     volumes:
       - ./server/db:/app/db
+    env_file:
+      - ./server/.env
     environment:
       - NODE_ENV=production
       - JWT_SECRET=alsalahy_secret_key_change_me_in_prod
