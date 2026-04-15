@@ -88,10 +88,10 @@ const translations = {
 
     // About
     about_title: "من نحن",
-    about_text_1: "الصلاحي للعطور هو علامة تجارية مصرية متخصصة في صناعة العطور الفاخرة. نؤمن بأن العطر هو الانطباع الأول الذي يدوم.",
-    about_text_2: "نختار بعناية أجود المكونات الطبيعية من جميع أنحاء العالم لنصنع لك عطوراً تحكي قصتك وتعكس شخصيتك الفريدة.",
-    about_quality: "جودة فائقة",
-    about_quality_desc: "مكونات طبيعية 100% مختارة بعناية",
+    about_text_1: "علامة الصلاحي للعطور متخصصة في صناعة العطور الراقية. نؤمن بأن العطر هو الانطباع الأول الذي يدوم.",
+    about_text_2: "",
+    about_quality: "جودة فريدة",
+    about_quality_desc: "افضل سعر بجودة استثنائية",
     about_crafted: "صناعة يدوية",
     about_crafted_desc: "كل عطر يُصنع بعناية فائقة",
     about_lasting: "ثبات يدوم",
@@ -107,9 +107,9 @@ const translations = {
     contact_phone_label: "الهاتف",
     contact_email_label: "البريد",
     contact_address_label: "العنوان",
-    contact_phone_val: "+20 123 456 7890",
-    contact_email_val: "info@alsalahyperfume.com",
-    contact_address_val: "القاهرة، مصر",
+    contact_phone_val: "+20 155 811 8597",
+    contact_email_val: "alsalahykhaled009@gmail.com",
+    contact_address_val: "بورسعيد ،مصر",
 
     // Footer
     footer_desc: "عطور فاخرة مصنوعة بعناية من أجود المكونات الطبيعية",
@@ -136,6 +136,7 @@ const translations = {
     // Misc
     lang_toggle: "EN",
     scroll_top: "العودة للأعلى",
+    coming_soon: "قريبا...",
   },
 
   en: {
@@ -222,10 +223,10 @@ const translations = {
 
     // About
     about_title: "About Us",
-    about_text_1: "ALSALAHY PERFUME is an Egyptian brand specializing in luxury fragrance creation. We believe that perfume is the first impression that lasts.",
-    about_text_2: "We carefully select the finest natural ingredients from around the world to create fragrances that tell your story and reflect your unique personality.",
-    about_quality: "Premium Quality",
-    about_quality_desc: "100% natural, carefully selected ingredients",
+    about_text_1: "ALSALAHY PERFUME is a brand specializing in luxury fragrance creation. We believe that perfume is the first impression that lasts.",
+    about_text_2: "",
+    about_quality: "Unique Quality",
+    about_quality_desc: "Best price with exceptional quality",
     about_crafted: "Handcrafted",
     about_crafted_desc: "Each fragrance is meticulously crafted",
     about_lasting: "Long Lasting",
@@ -241,9 +242,9 @@ const translations = {
     contact_phone_label: "Phone",
     contact_email_label: "Email",
     contact_address_label: "Address",
-    contact_phone_val: "+20 123 456 7890",
-    contact_email_val: "info@alsalahyperfume.com",
-    contact_address_val: "Cairo, Egypt",
+    contact_phone_val: "+20 155 811 8597",
+    contact_email_val: "alsalahykhaled009@gmail.com",
+    contact_address_val: "Port Said, Egypt",
 
     // Footer
     footer_desc: "Premium fragrances crafted with the finest natural ingredients",
@@ -270,6 +271,7 @@ const translations = {
     // Misc
     lang_toggle: "عربي",
     scroll_top: "Back to Top",
+    coming_soon: "Coming Soon...",
   },
 };
 
