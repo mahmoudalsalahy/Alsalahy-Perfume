@@ -25,6 +25,11 @@ class AuthSystem {
     const { data: { session } } = await window.supabaseClient.auth.getSession();
     if (session && session.user) {
       this.saveUserFromSession(session.user);
+      
+      // Clear the long Supabase token hash from the URL for a cleaner look
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        window.history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      }
     }
   }
 
