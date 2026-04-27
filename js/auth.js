@@ -101,17 +101,43 @@ class AuthSystem {
   }
 
   loginWithGoogle() {
-    // Simulated Google login
-    const user = {
-      id: "google_" + Date.now(),
-      name: "Google User",
-      email: "user@gmail.com",
-      phone: "",
-    };
-    this.saveUser(user);
-    this.updateUI();
-    this.closeModal();
-    notificationSystem.success(i18n.t("notif_login_success"));
+    if (typeof google === 'undefined') {
+      notificationSystem.error("Google Auth is not loaded yet.");
+      return;
+    }
+
+    if (!this.googleTokenClient) {
+      this.googleTokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: '615668254223-ibnjd02vks5iihcamhrcvnb05id8s434.apps.googleusercontent.com',
+        scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+        callback: (response) => {
+          if (response && response.access_token) {
+            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${response.access_token}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+              const user = {
+                id: "google_" + data.sub,
+                name: data.name,
+                email: data.email,
+                phone: ""
+              };
+              this.saveUser(user);
+              this.updateUI();
+              this.closeModal();
+              notificationSystem.success(i18n.t("notif_login_success"));
+            })
+            .catch(err => {
+              console.error(err);
+              notificationSystem.error(i18n.t("notif_login_error"));
+            });
+          }
+        },
+      });
+    }
+
+    this.googleTokenClient.requestAccessToken();
   }
 
   logout() {
