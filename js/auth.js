@@ -121,16 +121,30 @@ class AuthSystem {
                 id: "google_" + data.sub,
                 name: data.name,
                 email: data.email,
-                phone: ""
+                phone: "",
+                createdAt: new Date().toISOString()
               };
-              this.saveUser(user);
+
+              // Check if user already exists in storage or add them to sign up
+              let users = [];
+              try {
+                users = JSON.parse(localStorage.getItem("alsalahy_users") || "[]");
+              } catch (e) {}
+
+              const existingUser = users.find(u => u.email === data.email);
+              if (!existingUser) {
+                users.push(user);
+                localStorage.setItem("alsalahy_users", JSON.stringify(users));
+              }
+
+              this.saveUser(existingUser || user);
               this.updateUI();
               this.closeModal();
               notificationSystem.success(i18n.t("notif_login_success"));
             })
             .catch(err => {
               console.error(err);
-              notificationSystem.error(i18n.t("notif_login_error"));
+              notificationSystem.error(i18n.t("notif_login_error") || "Error logging in");
             });
           }
         },
