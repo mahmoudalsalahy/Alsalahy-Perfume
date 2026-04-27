@@ -505,7 +505,7 @@ ${itemsList}
 💰 *الإجمالي:* ${total} جنيه
 ━━━━━━━━━━━━━━━`;
 
-    const whatsappUrl = `https://wa.me/201501566118?text=${encodeURIComponent(whatsappMsg)}`;
+    const whatsappUrl = `https://wa.me/201558118597?text=${encodeURIComponent(whatsappMsg)}`;
     window.open(whatsappUrl, '_blank');
 
     // Show success
