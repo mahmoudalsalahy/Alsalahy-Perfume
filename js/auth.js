@@ -110,6 +110,7 @@ class AuthSystem {
       this.googleTokenClient = google.accounts.oauth2.initTokenClient({
         client_id: '615668254223-ibnjd02vks5iihcamhrcvnb05id8s434.apps.googleusercontent.com',
         scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+        prompt: 'select_account',
         callback: (response) => {
           if (response && response.access_token) {
             fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
