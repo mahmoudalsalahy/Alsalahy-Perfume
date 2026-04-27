@@ -7,53 +7,60 @@
 const products = [
   {
     id: 1,
-    name_ar: "عود ملكي",
-    name_en: "Oud Royal",
+    name_ar: "توتِّي",
+    name_en: "TOTTI",
     desc_ar:
-      "عطر فاخر بنفحات العود الطبيعي الممزوج بالعنبر والمسك الأبيض، يمنحك حضوراً ملكياً لا يُنسى. تركيبة شرقية أصيلة تدوم طويلاً.",
+      "عطر خشبي زهري فاخر بلمسة عصرية، يفتتح بانتعاش البرغموت وزهر البرتقال، ويستقر على قاعدة دافئة من الأخشاب والباتشولي ولمسة مسكية جذابة.",
     desc_en:
-      "A luxurious fragrance with natural oud notes blended with amber and white musk, giving you an unforgettable royal presence.",
-    notes_ar: "العود • العنبر • المسك الأبيض • خشب الصندل",
-    notes_en: "Oud • Amber • White Musk • Sandalwood",
-    price: 350,
-    image: "images/product-1.png",
-    sizes: ["30ml", "50ml", "100ml"],
-    prices: { "30ml": 200, "50ml": 350, "100ml": 550 },
+      "A refined woody floral fragrance with a modern opening of bergamot and orange blossom, settling into warm woods, patchouli, and an alluring musky trail.",
+    notes_ar: "البرغموت • زهر البرتقال • الأخشاب الدافئة • الباتشولي • المسك",
+    notes_en: "Bergamot • Orange Blossom • Warm Woods • Patchouli • Musk",
+    price: 299,
+    originalPrice: 349,
+    image: "images/totti.png",
+    sizes: ["50 ml"],
+    prices: { "50 ml": 299 },
   },
   {
     id: 2,
-    name_ar: "مسك فضي",
-    name_en: "Silver Musk",
+    name_ar: "بسيوني",
+    name_en: "Basiony",
     desc_ar:
-      "مزيج أنيق من المسك الفاخر والزهور البيضاء مع لمسات من الفانيليا، عطر يعكس الأناقة والنقاء. مثالي للمناسبات الخاصة.",
+      "عطر فاخر يلتقي فيه انتعاش الكمثرى واللافندر بحرارة القرفة، ثم يذوب في سحابة دافئة ولذيذة من الكراميل والفانيليا والعسل لحضور جذاب يدوم طويلاً.",
     desc_en:
-      "An elegant blend of premium musk and white flowers with touches of vanilla, a fragrance that reflects elegance and purity.",
-    notes_ar: "المسك • الزهور البيضاء • الفانيليا • الأرز",
-    notes_en: "Musk • White Flowers • Vanilla • Cedar",
-    price: 280,
-    image: "images/product-2.png",
-    sizes: ["30ml", "50ml", "100ml"],
-    prices: { "30ml": 160, "50ml": 280, "100ml": 450 },
+      "A luxurious fragrance where fresh pear and lavender meet the warmth of cinnamon, then melt into a rich trail of caramel, vanilla, and honey for a lasting captivating presence.",
+    notes_ar: "الكمثرى • اللافندر • القرفة • الكراميل • الفانيليا • العسل",
+    notes_en: "Pear • Lavender • Cinnamon • Caramel • Vanilla • Honey",
+    price: 299,
+    originalPrice: 349,
+    image: "images/basiony.png",
+    sizes: ["50 ml"],
+    prices: { "50 ml": 299 },
   },
   {
     id: 3,
-    name_ar: "وردة مخملية",
-    name_en: "Velvet Rose",
+    name_ar: "الفؤاد",
+    name_en: "Al-Fouad",
     desc_ar:
-      "عطر ساحر يجمع بين الورد الدمشقي والعود الفاخر مع لمسة من التوت البري، تجربة عطرية فريدة تأسر الحواس.",
+      "عطر فاخر يجمع انتعاش المريمية بحدة الزنجبيل ولمسة توابل دافئة، قبل أن يستقر على فيتيفر مدخن يمنحك حضوراً رجولياً غامضاً يدوم طويلاً.",
     desc_en:
-      "A captivating fragrance that combines Damascene rose with premium oud and a touch of berry, a unique olfactory experience.",
-    notes_ar: "الورد الدمشقي • العود • التوت البري • الباتشولي",
-    notes_en: "Damascene Rose • Oud • Berry • Patchouli",
-    price: 320,
-    image: "images/product-3.png",
-    sizes: ["30ml", "50ml", "100ml"],
-    prices: { "30ml": 180, "50ml": 320, "100ml": 500 },
+      "A refined scent blending the freshness of sage with sharp ginger and warm spices, settling into smoky vetiver for a bold, masculine presence that lasts.",
+    notes_ar: "المريمية • الزنجبيل • التوابل الدافئة • الفيتيفر • الأخشاب المدخنة",
+    notes_en: "Sage • Ginger • Warm Spices • Vetiver • Smoky Woods",
+    price: 299,
+    originalPrice: 349,
+    image: "images/al-fouad.png",
+    sizes: ["50 ml"],
+    prices: { "50 ml": 299 },
   },
 ];
 
 // ===== App Initialization =====
 document.addEventListener("DOMContentLoaded", () => {
+  document
+    .querySelector(".modal-product-notes-label")
+    ?.setAttribute("data-i18n", "product_notes_label");
+
   // Init modules
   i18n.init();
   notificationSystem.init();
@@ -128,6 +135,41 @@ function updateDynamicContent() {
   auth.updateUI();
 }
 
+function getDiscountPercentage(currentPrice, originalPrice) {
+  if (!originalPrice || originalPrice <= currentPrice) return 0;
+  return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+}
+
+function getProductPriceMarkup(product, price = product.price) {
+  const originalPrice = product.originalPrice;
+  const currency = i18n.t("product_currency");
+
+  if (!originalPrice || originalPrice <= price) {
+    return `<span class="product-price-tag">${price} <small>${currency}</small></span>`;
+  }
+
+  return `
+    <div class="product-price-block">
+      <span class="product-price-old">${originalPrice} <small>${currency}</small></span>
+      <span class="product-price-tag">${price} <small>${currency}</small></span>
+    </div>
+  `;
+}
+
+function getModalPriceMarkup(product, price = product.price) {
+  const originalPrice = product.originalPrice;
+  const currency = i18n.t("product_currency");
+
+  if (!originalPrice || originalPrice <= price) {
+    return `<span class="modal-price-current">${price} ${currency}</span>`;
+  }
+
+  return `
+    <span class="modal-price-old">${originalPrice} ${currency}</span>
+    <span class="modal-price-current">${price} ${currency}</span>
+  `;
+}
+
 // ===== Product Cards =====
 function renderProducts() {
   const container = document.getElementById("products-grid");
@@ -136,9 +178,17 @@ function renderProducts() {
 
   container.innerHTML = products
     .map(
-      (product, index) => `
+      (product, index) => {
+        const discountPercentage = getDiscountPercentage(product.price, product.originalPrice);
+        const sizeLabel = product.sizes[0] || "50 ml";
+
+        return `
     <div class="product-card reveal-on-scroll" style="animation-delay: ${index * 0.15}s">
       <div class="product-image-wrapper">
+        <div class="product-badges">
+          <span class="product-badge product-badge-size">${sizeLabel}</span>
+          ${discountPercentage > 0 ? `<span class="product-badge product-badge-discount">-${discountPercentage}%</span>` : ""}
+        </div>
         <img src="${product.image}" alt="${lang === "ar" ? product.name_ar : product.name_en}" class="product-image" loading="lazy">
         <div class="product-overlay">
           <button class="btn-product-detail ripple-btn" onclick="openProductModal(${product.id})">
@@ -151,7 +201,7 @@ function renderProducts() {
         <h3 class="product-name">${lang === "ar" ? product.name_ar : product.name_en}</h3>
         <p class="product-notes">${lang === "ar" ? product.notes_ar : product.notes_en}</p>
         <div class="product-bottom">
-          <span class="product-price-tag">${product.price} <small>${i18n.t("product_currency")}</small></span>
+          ${getProductPriceMarkup(product)}
           <button class="btn-add-cart ripple-btn" onclick="addToCart(${product.id})">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
             <span>${i18n.t("product_add_cart")}</span>
@@ -159,7 +209,8 @@ function renderProducts() {
         </div>
       </div>
     </div>
-  `
+  `;
+      }
     )
     .join("");
 
@@ -175,7 +226,7 @@ function setupProductCards() {
 }
 
 // ===== Add to Cart =====
-function addToCart(productId, size = "50ml") {
+function addToCart(productId, size = "50 ml") {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
@@ -205,7 +256,7 @@ function openProductModal(productId) {
   sizeContainer.innerHTML = product.sizes
     .map(
       (s, i) => `
-    <button class="size-btn ${i === 1 ? "active" : ""}" data-size="${s}" data-price="${product.prices[s]}" onclick="selectSize(this, ${product.id})">
+    <button class="size-btn ${i === 0 ? "active" : ""}" data-size="${s}" data-price="${product.prices[s]}" onclick="selectSize(this, ${product.id})">
       ${s}
     </button>
   `
@@ -213,7 +264,7 @@ function openProductModal(productId) {
     .join("");
 
   // Price
-  document.getElementById("modal-product-price").textContent = `${product.price} ${i18n.t("product_currency")}`;
+  document.getElementById("modal-product-price").innerHTML = getModalPriceMarkup(product);
 
   // Reset quantity
   document.getElementById("modal-quantity").textContent = "1";
@@ -238,8 +289,8 @@ function selectSize(btn, productId) {
   document.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
   btn.classList.add("active");
 
-  const price = btn.dataset.price;
-  document.getElementById("modal-product-price").textContent = `${price} ${i18n.t("product_currency")}`;
+  const price = Number(btn.dataset.price);
+  document.getElementById("modal-product-price").innerHTML = getModalPriceMarkup(product, price);
 }
 
 function changeModalQuantity(delta) {
@@ -252,8 +303,7 @@ function changeModalQuantity(delta) {
 
 function addToCartFromModal() {
   const activeSize = document.querySelector(".size-btn.active");
-  const size = activeSize ? activeSize.dataset.size : "50ml";
-  const price = activeSize ? parseInt(activeSize.dataset.price) : 350;
+  const size = activeSize ? activeSize.dataset.size : "50 ml";
   const qty = parseInt(document.getElementById("modal-quantity").textContent);
   const productName = document.getElementById("modal-product-name").textContent;
 
@@ -264,6 +314,7 @@ function addToCartFromModal() {
   );
 
   if (product) {
+    const price = activeSize ? parseInt(activeSize.dataset.price) : product.price;
     cart.addItem({ ...product, price }, size, qty);
     closeProductModal();
   }
@@ -320,7 +371,7 @@ function openOrderModal() {
     .map(
       (item) => `
     <div class="order-summary-item">
-      <span>${lang === "ar" ? item.name_ar : item.name_en} × ${item.quantity}</span>
+      <span>${lang === "ar" ? item.name_ar : item.name_en} Ã— ${item.quantity}</span>
       <span>${item.price * item.quantity} ${i18n.t("product_currency")}</span>
     </div>
   `

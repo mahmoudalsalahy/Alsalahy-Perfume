@@ -48,16 +48,17 @@ export default function HomePage() {
 
       <div className="gold-separator"></div>
 
-      {/* Coming Soon Teaser */}
-      <section className="section coming-soon-section" id="products">
+      {/* Featured Products */}
+      <section className="section products-section" id="products">
         <div className="container">
-          <div className="coming-soon-content">
-            <h2 className="coming-soon-title">{t('coming_soon')}</h2>
-            <div className="hourglass-container">
-              <svg className="hourglass-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M5 2h14M5 22h14M12 12l-7-7V4h14v1l-7 7m0 0l7 7v1H5v-1l7-7" />
-              </svg>
-            </div>
+          <div className="section-header">
+            <h2 className="section-title">{t('products_title')}</h2>
+            <p className="section-subtitle">{t('products_subtitle')}</p>
+          </div>
+          <div className="products-grid">
+            {products.slice(0, 3).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         </div>
       </section>

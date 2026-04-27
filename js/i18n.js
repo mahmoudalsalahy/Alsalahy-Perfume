@@ -32,6 +32,7 @@ const translations = {
     product_price: "السعر",
     product_currency: "ج.م",
     product_close: "إغلاق",
+    product_notes_label: "المكونات",
 
     // Product names & descriptions
     product_1_name: "عود ملكي",
@@ -167,6 +168,7 @@ const translations = {
     product_price: "Price",
     product_currency: "EGP",
     product_close: "Close",
+    product_notes_label: "Ingredients",
 
     // Product names & descriptions
     product_1_name: "Oud Royal",

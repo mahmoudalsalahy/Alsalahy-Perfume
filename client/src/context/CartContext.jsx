@@ -17,7 +17,7 @@ export function CartProvider({ children }) {
     localStorage.setItem('alsalahy_cart', JSON.stringify(items));
   }, [items]);
 
-  const addItem = useCallback((product, size = '50ml', quantity = 1) => {
+  const addItem = useCallback((product, size = '50 ml', quantity = 1) => {
     setItems(prev => {
       const existing = prev.findIndex(i => i.id === product.id && i.size === size);
       if (existing > -1) {

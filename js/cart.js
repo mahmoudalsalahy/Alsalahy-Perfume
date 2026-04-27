@@ -30,7 +30,7 @@ class ShoppingCart {
     localStorage.setItem("alsalahy_cart", JSON.stringify(this.items));
   }
 
-  addItem(product, size = "50ml", quantity = 1) {
+  addItem(product, size = "50 ml", quantity = 1) {
     const existingIndex = this.items.findIndex(
       (item) => item.id === product.id && item.size === size
     );
