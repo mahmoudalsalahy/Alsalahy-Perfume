@@ -3,8 +3,8 @@
  * Initializes all modules and manages product data
  */
 
-// Product Data
-const products = [
+// Product Data Fallback
+const productsFallback = [
   {
     id: 1,
     name_ar: "توتِّي",
@@ -55,17 +55,35 @@ const products = [
   },
 ];
 
+let products = productsFallback;
+
 // ===== App Initialization =====
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   document
     .querySelector(".modal-product-notes-label")
     ?.setAttribute("data-i18n", "product_notes_label");
+
+  // Fetch products from Supabase
+  if (window.supabaseClient) {
+    try {
+      const { data, error } = await window.supabaseClient.from('products').select('*');
+      if (!error && data && data.length > 0) {
+        products = data;
+      }
+    } catch (err) {
+      console.error("Supabase products fetch error:", err);
+    }
+  }
 
   // Init modules
   i18n.init();
   notificationSystem.init();
   cart.init();
-  auth.init();
+  
+  if (window.auth) {
+    await window.auth.init();
+  }
+
   animations.init();
 
   // Setup event listeners
@@ -132,7 +150,7 @@ function updateDynamicContent() {
   // Re-render cart if open
   if (cart.isOpen) cart.renderCartItems();
   // Update auth UI
-  auth.updateUI();
+  if (window.auth) auth.updateUI();
 }
 
 function getDiscountPercentage(currentPrice, originalPrice) {
@@ -180,7 +198,8 @@ function renderProducts() {
     .map(
       (product, index) => {
         const discountPercentage = getDiscountPercentage(product.price, product.originalPrice);
-        const sizeLabel = product.sizes[0] || "50 ml";
+        const sizesArray = product.sizes ? product.sizes : ["50 ml"];
+        const sizeLabel = sizesArray[0] || "50 ml";
 
         return `
     <div class="product-card reveal-on-scroll" style="animation-delay: ${index * 0.15}s">
@@ -230,7 +249,8 @@ function addToCart(productId, size = "50 ml") {
   const product = products.find((p) => p.id === productId);
   if (!product) return;
 
-  const price = product.prices[size] || product.price;
+  const pricesObj = product.prices || {};
+  const price = pricesObj[size] || product.price;
   cart.addItem({ ...product, price }, size);
 }
 
@@ -253,10 +273,13 @@ function openProductModal(productId) {
 
   // Size selector
   const sizeContainer = document.getElementById("modal-size-selector");
-  sizeContainer.innerHTML = product.sizes
+  const sizesArray = product.sizes ? product.sizes : ["50 ml"];
+  const pricesObj = product.prices || {};
+
+  sizeContainer.innerHTML = sizesArray
     .map(
       (s, i) => `
-    <button class="size-btn ${i === 0 ? "active" : ""}" data-size="${s}" data-price="${product.prices[s]}" onclick="selectSize(this, ${product.id})">
+    <button class="size-btn ${i === 0 ? "active" : ""}" data-size="${s}" data-price="${pricesObj[s] || product.price}" onclick="selectSize(this, ${product.id})">
       ${s}
     </button>
   `
@@ -371,7 +394,7 @@ function openOrderModal() {
     .map(
       (item) => `
     <div class="order-summary-item">
-      <span>${lang === "ar" ? item.name_ar : item.name_en} Ã— ${item.quantity}</span>
+      <span>${lang === "ar" ? item.name_ar : item.name_en} × ${item.quantity}</span>
       <span>${item.price * item.quantity} ${i18n.t("product_currency")}</span>
     </div>
   `
@@ -381,9 +404,9 @@ function openOrderModal() {
   document.getElementById("order-total-amount").textContent = `${cart.getTotal()} ${i18n.t("product_currency")}`;
 
   // Pre-fill if logged in
-  if (auth.isLoggedIn()) {
-    document.getElementById("order-name").value = auth.currentUser.name || "";
-    document.getElementById("order-phone").value = auth.currentUser.phone || "";
+  if (window.auth && window.auth.isLoggedIn()) {
+    document.getElementById("order-name").value = window.auth.currentUser.name || "";
+    document.getElementById("order-phone").value = window.auth.currentUser.phone || "";
   }
 
   modal.classList.add("modal-open");
@@ -408,43 +431,89 @@ function closeOrderModal() {
   }, 300);
 }
 
-function handleOrderSubmit(e) {
+async function handleOrderSubmit(e) {
   e.preventDefault();
 
   const name = document.getElementById("order-name").value.trim();
   const phone = document.getElementById("order-phone").value.trim();
   const address = document.getElementById("order-address").value.trim();
   const city = document.getElementById("order-city").value.trim();
+  const notes = document.getElementById("order-notes")?.value.trim() || "";
 
   if (!name || !phone || !address || !city) {
     notificationSystem.warning(i18n.t("notif_fill_fields"));
     return;
   }
 
-  // Show success
-  const successView = document.getElementById("order-success");
-  const formView = document.getElementById("order-form-view");
+  try {
+    const total = cart.getTotal();
+    const user_id = window.auth && window.auth.currentUser ? window.auth.currentUser.id : null;
+    
+    // 1. Insert Order Status
+    const { data: orderData, error: orderError } = await window.supabaseClient
+      .from('orders')
+      .insert([{
+        user_id,
+        customer_name: name,
+        phone,
+        address,
+        city,
+        notes,
+        total,
+        status: 'pending'
+      }])
+      .select();
+      
+    if (orderError) throw orderError;
+    const orderId = orderData[0].id;
+    
+    // 2. Insert Order Items
+    const orderItems = cart.items.map(item => ({
+      order_id: orderId,
+      product_id: item.id,
+      size: item.size,
+      quantity: item.quantity,
+      price: item.price
+    }));
+    
+    if (orderItems.length > 0) {
+      const { error: itemsError } = await window.supabaseClient
+        .from('order_items')
+        .insert(orderItems);
+        
+      if (itemsError) throw itemsError;
+    }
 
-  formView.style.display = "none";
-  successView.style.display = "flex";
+    // Show success
+    const successView = document.getElementById("order-success");
+    const formView = document.getElementById("order-form-view");
 
-  // Animate checkmark
-  setTimeout(() => {
-    successView.querySelector(".success-checkmark")?.classList.add("animate");
-  }, 100);
+    if (formView) formView.style.display = "none";
+    if (successView) successView.style.display = "flex";
 
-  // Clear cart and notify
-  cart.items = [];
-  cart.saveToStorage();
-  cart.updateBadge();
-  notificationSystem.success(i18n.t("notif_order_placed"));
+    // Animate checkmark
+    setTimeout(() => {
+      successView?.querySelector(".success-checkmark")?.classList.add("animate");
+    }, 100);
 
-  // Reset form
-  document.getElementById("order-form").reset();
+    // Clear cart and notify
+    cart.items = [];
+    cart.saveToStorage();
+    cart.updateBadge();
+    notificationSystem.success(i18n.t("notif_order_placed"));
+
+    // Reset form
+    document.getElementById("order-form").reset();
+
+  } catch (err) {
+    console.error("Order submit error:", err);
+    notificationSystem.error(i18n.t("notif_login_error") || "حدث خطأ أثناء إرسال الطلب. حاول مجدداً.");
+  }
 }
 
 // ===== Auth Modal =====
 function setupAuthModal() {
+  if (!window.auth) return;
   const loginBtn = document.getElementById("auth-login-btn");
   const overlay = document.getElementById("auth-overlay");
   const closeBtn = document.getElementById("auth-close-btn");
@@ -486,10 +555,31 @@ function setupAuthModal() {
 // ===== Contact Form =====
 function setupContactForm() {
   const form = document.getElementById("contact-form");
-  form?.addEventListener("submit", (e) => {
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    notificationSystem.success(i18n.t("notif_contact_sent"));
-    form.reset();
+    
+    const name = form.querySelector('input[type="text"]')?.value.trim();
+    const email = form.querySelector('input[type="email"]')?.value.trim();
+    const message = form.querySelector('textarea')?.value.trim();
+    
+    if (!name || !email || !message) {
+      notificationSystem.warning(i18n.t("notif_fill_fields"));
+      return;
+    }
+
+    try {
+      const { error } = await window.supabaseClient.from('contact_messages').insert([{
+        name, email, message
+      }]);
+      
+      if (error) throw error;
+      
+      notificationSystem.success(i18n.t("notif_contact_sent"));
+      form.reset();
+    } catch (err) {
+      console.error("Contact form error:", err);
+      notificationSystem.error(i18n.t("notif_login_error") || "حدث خطأ أثناء إرسال رسالتك.");
+    }
   });
 }
 

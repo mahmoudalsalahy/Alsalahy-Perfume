@@ -1,6 +1,6 @@
 /**
  * auth.js - Authentication System
- * Email/Phone/Google login/register with localStorage
+ * Email/Phone/Google login/register with Supabase Auth
  */
 
 class AuthSystem {
@@ -10,87 +10,87 @@ class AuthSystem {
     this.activeTab = "login";
   }
 
-  init() {
-    this.loadUser();
-    this.updateUI();
-  }
-
-  loadUser() {
-    try {
-      const data = localStorage.getItem("alsalahy_user");
-      if (data) {
-        this.currentUser = JSON.parse(data);
+  async init() {
+    // Set up auth state listener
+    window.supabaseClient.auth.onAuthStateChange((event, session) => {
+      if (session && session.user) {
+        this.saveUserFromSession(session.user);
+      } else {
+        this.currentUser = null;
+        this.updateUI();
       }
-    } catch (e) {
-      this.currentUser = null;
+    });
+
+    // Initial session load
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (session && session.user) {
+      this.saveUserFromSession(session.user);
     }
   }
 
-  saveUser(user) {
-    this.currentUser = user;
-    localStorage.setItem("alsalahy_user", JSON.stringify(user));
+  saveUserFromSession(user) {
+    // Extract metadata
+    const name = user.user_metadata?.name || user.user_metadata?.full_name || "المستخدم";
+    const phone = user.user_metadata?.phone || "";
+    
+    this.currentUser = {
+      id: user.id,
+      name,
+      email: user.email,
+      phone
+    };
+    this.updateUI();
   }
 
   isLoggedIn() {
     return this.currentUser !== null;
   }
 
-  register(name, email, phone, password) {
-    // Get existing users
-    let users = [];
+  async register(name, email, phone, password) {
     try {
-      users = JSON.parse(localStorage.getItem("alsalahy_users") || "[]");
-    } catch (e) {
-      users = [];
-    }
+      const { data, error } = await window.supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name,
+            phone
+          }
+        }
+      });
 
-    // Check if email already exists
-    if (users.find((u) => u.email === email)) {
-      notificationSystem.error(i18n.t("notif_register_error"));
+      if (error) throw error;
+
+      this.closeModal();
+      if (data.session) {
+        notificationSystem.success(i18n.t("notif_register_success") || "تم التسجيل بنجاح");
+      } else {
+        notificationSystem.success(i18n.t("notif_register_success") || "تم التسجيل. تحقق من بريدك الإلكتروني.");
+      }
+      return true;
+    } catch (err) {
+      console.error(err);
+      notificationSystem.error(err.message || i18n.t("notif_register_error"));
       return false;
     }
-
-    const user = {
-      id: Date.now().toString(),
-      name,
-      email,
-      phone,
-      password,
-      createdAt: new Date().toISOString(),
-    };
-
-    users.push(user);
-    localStorage.setItem("alsalahy_users", JSON.stringify(users));
-
-    // Auto login
-    this.saveUser({ id: user.id, name: user.name, email: user.email, phone: user.phone });
-    this.updateUI();
-    this.closeModal();
-    notificationSystem.success(i18n.t("notif_register_success"));
-    return true;
   }
 
-  login(email, password) {
-    let users = [];
+  async login(email, password) {
     try {
-      users = JSON.parse(localStorage.getItem("alsalahy_users") || "[]");
-    } catch (e) {
-      users = [];
-    }
+      const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+      if (error) throw error;
 
-    if (user) {
-      this.saveUser({ id: user.id, name: user.name, email: user.email, phone: user.phone });
-      this.updateUI();
       this.closeModal();
       notificationSystem.success(i18n.t("notif_login_success"));
       return true;
-    } else {
-      notificationSystem.error(i18n.t("notif_login_error"));
-      // Shake the form
+    } catch (err) {
+      console.error(err);
+      notificationSystem.error(err.message || i18n.t("notif_login_error"));
+      
       const form = document.querySelector(".auth-form.active");
       if (form) {
         form.classList.add("shake");
@@ -100,64 +100,24 @@ class AuthSystem {
     }
   }
 
-  loginWithGoogle() {
-    if (typeof google === 'undefined') {
-      notificationSystem.error("Google Auth is not loaded yet.");
-      return;
-    }
-
-    if (!this.googleTokenClient) {
-      this.googleTokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: '615668254223-ibnjd02vks5iihcamhrcvnb05id8s434.apps.googleusercontent.com',
-        scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-        prompt: 'select_account',
-        callback: (response) => {
-          if (response && response.access_token) {
-            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-              headers: { Authorization: `Bearer ${response.access_token}` }
-            })
-            .then(res => res.json())
-            .then(data => {
-              const user = {
-                id: "google_" + data.sub,
-                name: data.name,
-                email: data.email,
-                phone: "",
-                createdAt: new Date().toISOString()
-              };
-
-              // Check if user already exists in storage or add them to sign up
-              let users = [];
-              try {
-                users = JSON.parse(localStorage.getItem("alsalahy_users") || "[]");
-              } catch (e) {}
-
-              const existingUser = users.find(u => u.email === data.email);
-              if (!existingUser) {
-                users.push(user);
-                localStorage.setItem("alsalahy_users", JSON.stringify(users));
-              }
-
-              this.saveUser(existingUser || user);
-              this.updateUI();
-              this.closeModal();
-              notificationSystem.success(i18n.t("notif_login_success"));
-            })
-            .catch(err => {
-              console.error(err);
-              notificationSystem.error(i18n.t("notif_login_error") || "Error logging in");
-            });
-          }
-        },
+  async loginWithGoogle() {
+    try {
+      const { data, error } = await window.supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + window.location.pathname
+        }
       });
+      if (error) throw error;
+    } catch (err) {
+      console.error(err);
+      notificationSystem.error(i18n.t("notif_login_error") || "Error logging in with Google");
     }
-
-    this.googleTokenClient.requestAccessToken();
   }
 
-  logout() {
+  async logout() {
+    await window.supabaseClient.auth.signOut();
     this.currentUser = null;
-    localStorage.removeItem("alsalahy_user");
     this.updateUI();
     notificationSystem.info(i18n.t("notif_logout_success"));
   }
