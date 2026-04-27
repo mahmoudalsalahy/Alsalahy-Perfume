@@ -33,7 +33,7 @@ class AuthSystem {
     }
   }
 
-  saveUserFromSession(user) {
+  async saveUserFromSession(user) {
     // Extract metadata
     const name = user.user_metadata?.name || user.user_metadata?.full_name || "المستخدم";
     const phone = user.user_metadata?.phone || "";
@@ -45,6 +45,18 @@ class AuthSystem {
       phone
     };
     this.updateUI();
+
+    // Save/update user profile in Supabase users table
+    try {
+      await window.supabaseClient.from('users').upsert({
+        id: user.id,
+        name,
+        email: user.email,
+        phone
+      }, { onConflict: 'id' });
+    } catch (err) {
+      console.error("Error saving user to database:", err);
+    }
   }
 
   isLoggedIn() {
