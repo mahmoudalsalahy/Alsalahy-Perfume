@@ -201,13 +201,13 @@ function renderProducts() {
         const sizeLabel = sizesArray[0] || "50 ml";
 
         return `
-    <div class="product-card reveal-on-scroll" style="animation-delay: ${index * 0.15}s">
+    <div class="product-card reveal-on-scroll" style="animation-delay: ${index * 0.08}s">
       <div class="product-image-wrapper">
         <div class="product-badges">
           <span class="product-badge product-badge-size">${sizeLabel}</span>
           ${discountPercentage > 0 ? `<span class="product-badge product-badge-discount">-${discountPercentage}%</span>` : ""}
         </div>
-        <img src="${product.image}" alt="${lang === "ar" ? product.name_ar : product.name_en}" class="product-image" loading="lazy">
+        <img src="${product.image}" alt="${lang === "ar" ? product.name_ar : product.name_en}" class="product-image">
         <div class="product-overlay">
           <button class="btn-product-detail ripple-btn" onclick="openProductModal(${product.id})">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
