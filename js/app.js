@@ -58,49 +58,48 @@ const productsFallback = [
 let products = productsFallback;
 
 // ===== App Initialization =====
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   document
     .querySelector(".modal-product-notes-label")
     ?.setAttribute("data-i18n", "product_notes_label");
 
-  // Fetch products from Supabase
-  if (window.supabaseClient) {
-    try {
-      const { data, error } = await window.supabaseClient.from('products').select('*');
-      if (!error && data && data.length > 0) {
-        products = data;
-      }
-    } catch (err) {
-      console.error("Supabase products fetch error:", err);
-    }
-  }
-
-  // Init modules
+  // Init core display modules immediately
   i18n.init();
   notificationSystem.init();
   cart.init();
-  
-  if (window.auth) {
-    await window.auth.init();
-  }
-
   animations.init();
 
-  // Setup event listeners
+  // Setup basic event listeners
   setupNavigation();
   setupLanguageToggle();
   setupCartDrawer();
   setupAuthModal();
-  setupProductCards();
+  setupProductCards(); // Render fallback items visually immediately
   setupOrderModal();
   setupContactForm();
   setupMobileMenu();
 
-  // Page load animation
+  // Reveal page immediately to prevent any perceived slowness or blank screen
   document.body.classList.add("loaded");
+  setTimeout(() => animations.setupProductTilt(), 300);
 
-  // Setup product tilt after a short delay
-  setTimeout(() => animations.setupProductTilt(), 500);
+  // Background Database and Authentication Loading
+  if (window.supabaseClient) {
+    // Auth init (takes time)
+    if (window.auth) {
+      window.auth.init().catch(err => console.error("Auth init async error:", err));
+    }
+    
+    // Fetch products in background, then update UI silently
+    window.supabaseClient.from('products').select('*')
+      .then(({ data, error }) => {
+        if (!error && data && data.length > 0) {
+          products = data;
+          renderProducts(); // Refresh products with real data
+        }
+      })
+      .catch(err => console.error("Supabase products background fetch error:", err));
+  }
 });
 
 // ===== Navigation =====
