@@ -8,7 +8,7 @@ class NotificationSystem {
     this.container = null;
     this.queue = [];
     this.maxVisible = 4;
-    this.defaultDuration = 3500;
+    this.defaultDuration = 2000;
   }
 
   init() {
@@ -79,7 +79,7 @@ class NotificationSystem {
       if (progressBar) progressBar.style.animationPlayState = "running";
       notification._timer = setTimeout(() => {
         this.dismiss(notification);
-      }, 1500);
+      }, 1000);
     });
 
     return notification;
