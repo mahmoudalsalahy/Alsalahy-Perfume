@@ -73,4 +73,10 @@ UPDATE products SET price = 300, original_price_50ml = 350;
 -- =============================================
 ALTER TABLE users ADD COLUMN IF NOT EXISTS cart JSONB DEFAULT '[]'::JSONB;
 
+-- =============================================
+-- Enable Realtime for Cart Sync
+-- =============================================
+ALTER PUBLICATION supabase_realtime ADD TABLE users;
+
+
 

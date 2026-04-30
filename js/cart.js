@@ -77,6 +77,43 @@ class ShoppingCart {
     }
   }
 
+  setupRealtime() {
+    if (window.auth && window.auth.isLoggedIn()) {
+      const userId = window.auth.currentUser.id;
+      
+      // Remove previous subscription if any
+      if (this.subscription) {
+        window.supabaseClient.removeChannel(this.subscription);
+      }
+
+      this.subscription = window.supabaseClient
+        .channel(`user-cart-${userId}`)
+        .on(
+          'postgres_changes',
+          { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'users', 
+            filter: `id=eq.${userId}` 
+          },
+          (payload) => {
+            if (payload.new && payload.new.cart) {
+              const newCart = payload.new.cart;
+              // Check if actual content changed to avoid infinite loops or unnecessary renders
+              if (JSON.stringify(this.items) !== JSON.stringify(newCart)) {
+                this.items = newCart;
+                localStorage.setItem("alsalahy_cart", JSON.stringify(this.items));
+                this.updateBadge();
+                this.notifyListeners();
+                console.log("Cart synced in real-time from database.");
+              }
+            }
+          }
+        )
+        .subscribe();
+    }
+  }
+
   addItem(product, size = "50 ml", quantity = 1) {
     const existingIndex = this.items.findIndex(
       (item) => item.id === product.id && item.size === size

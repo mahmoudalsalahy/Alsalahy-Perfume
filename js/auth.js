@@ -47,7 +47,10 @@ class AuthSystem {
     this.updateUI();
     
     // Load saved cart from cloud
-    if (window.cart) window.cart.loadFromSupabase();
+    if (window.cart) {
+      window.cart.loadFromSupabase();
+      window.cart.setupRealtime();
+    }
 
     // Save/update user profile in Supabase users table
     try {
