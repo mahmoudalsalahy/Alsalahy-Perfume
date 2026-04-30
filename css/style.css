@@ -3,8 +3,31 @@
    Color Palette: Dark/Black, Silver, Gold
    =================================================== */
 
-/* === Google Fonts === */
-@import url("https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Tajawal:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+/* === Thmanyah Font Family === */
+@font-face {
+  font-family: 'Thmanyah';
+  src: url('../Thmanyah-Font-Family/thmanyah%20typeface/thmanyahsans/woff2/thmanyahsans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Thmanyah';
+  src: url('../Thmanyah-Font-Family/thmanyah%20typeface/thmanyahsans/woff2/thmanyahsans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Thmanyah';
+  src: url('../Thmanyah-Font-Family/thmanyah%20typeface/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Thmanyah';
+  src: url('../Thmanyah-Font-Family/thmanyah%20typeface/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
 
 /* === CSS Custom Properties (Design Tokens) === */
 :root {
@@ -38,9 +61,9 @@
   --info: #b0b0b0;
 
   /* Typography */
-  --font-ar: "Tajawal", sans-serif;
-  --font-en: "Playfair Display", serif;
-  --font-heading: "Amiri", serif;
+  --font-ar: "Thmanyah", sans-serif;
+  --font-en: "Thmanyah", sans-serif;
+  --font-heading: "Thmanyah", sans-serif;
 
   /* Spacing */
   --section-padding: 100px 0;
