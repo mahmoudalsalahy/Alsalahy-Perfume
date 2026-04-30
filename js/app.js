@@ -479,21 +479,57 @@ function closeOrdersModal() {
 }
 
 async function fetchUserOrders(userId) {
-  // Fetch orders with their items
-  const { data, error } = await window.supabaseClient
-    .from('orders')
-    .select(`
-      *,
-      order_items (
+  try {
+    // Try full nested query first (requires FK relationships in Supabase)
+    const { data, error } = await window.supabaseClient
+      .from('orders')
+      .select(`
         *,
-        products (name_ar, name_en)
-      )
-    `)
+        order_items (
+          *,
+          products (name_ar, name_en)
+        )
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (!error && data) return data;
+  } catch (e) {
+    console.warn("Nested query failed, trying simpler approach:", e);
+  }
+
+  // Fallback: fetch orders and items separately
+  const { data: ordersData, error: ordersError } = await window.supabaseClient
+    .from('orders')
+    .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
-  return data;
+  if (ordersError) throw ordersError;
+  if (!ordersData || ordersData.length === 0) return [];
+
+  // Fetch order items for all orders
+  const orderIds = ordersData.map(o => o.id);
+  const { data: itemsData, error: itemsError } = await window.supabaseClient
+    .from('order_items')
+    .select('*')
+    .in('order_id', orderIds);
+
+  if (itemsError) throw itemsError;
+
+  // Attach items to their orders & resolve product names from local data
+  return ordersData.map(order => ({
+    ...order,
+    order_items: (itemsData || [])
+      .filter(item => item.order_id === order.id)
+      .map(item => {
+        const product = products.find(p => p.id === item.product_id);
+        return {
+          ...item,
+          products: product ? { name_ar: product.name_ar, name_en: product.name_en } : null
+        };
+      })
+  }));
 }
 
 function renderOrders(orders) {
