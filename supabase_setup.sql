@@ -62,3 +62,9 @@ DROP POLICY IF EXISTS "Anyone can read products" ON products;
 CREATE POLICY "Anyone can read products"
   ON products FOR SELECT
   USING (true);
+
+-- =============================================
+-- Update Product Prices
+-- =============================================
+UPDATE products SET price = 300, original_price = 350;
+
