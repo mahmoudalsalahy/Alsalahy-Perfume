@@ -481,7 +481,7 @@ textarea {
   margin-bottom: 16px;
   animation: heroTitleIn 1s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
   opacity: 0;
-  letter-spacing: 4px;
+  letter-spacing: 0;
 }
 
 [dir="ltr"] .hero-title {
