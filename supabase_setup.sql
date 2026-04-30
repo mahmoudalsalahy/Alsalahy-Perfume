@@ -3,19 +3,7 @@
 -- Run this in Supabase SQL Editor
 -- =============================================
 
--- 1. Fix user_id column type: convert text → uuid
-ALTER TABLE orders
-  ALTER COLUMN user_id TYPE uuid USING user_id::uuid;
-
--- 2. Add Foreign Key: orders.user_id → auth.users(id)
-ALTER TABLE orders
-  DROP CONSTRAINT IF EXISTS orders_user_id_fkey;
-
-ALTER TABLE orders
-  ADD CONSTRAINT orders_user_id_fkey
-  FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL;
-
--- 3. Add Foreign Key: order_items.order_id → orders.id
+-- 1. Add Foreign Key: order_items.order_id → orders.id
 ALTER TABLE order_items
   DROP CONSTRAINT IF EXISTS order_items_order_id_fkey;
 
@@ -23,7 +11,7 @@ ALTER TABLE order_items
   ADD CONSTRAINT order_items_order_id_fkey
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE;
 
--- 4. Add Foreign Key: order_items.product_id → products.id
+-- 2. Add Foreign Key: order_items.product_id → products.id
 ALTER TABLE order_items
   DROP CONSTRAINT IF EXISTS order_items_product_id_fkey;
 
@@ -41,7 +29,7 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Users can read own orders" ON orders;
 CREATE POLICY "Users can read own orders"
   ON orders FOR SELECT
-  USING (auth.uid() = user_id);
+  USING (auth.uid()::text = user_id::text);
 
 DROP POLICY IF EXISTS "Anyone can insert orders" ON orders;
 CREATE POLICY "Anyone can insert orders"
@@ -58,7 +46,7 @@ CREATE POLICY "Users can read own order items"
     EXISTS (
       SELECT 1 FROM orders
       WHERE orders.id = order_items.order_id
-      AND orders.user_id = auth.uid()
+      AND auth.uid()::text = orders.user_id::text
     )
   );
 
