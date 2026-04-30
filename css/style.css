@@ -2454,9 +2454,28 @@ textarea.contact-input {
   }
 
   .products-grid {
-    grid-template-columns: 1fr;
-    max-width: 400px;
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 100%;
+    gap: 16px;
     margin: 0 auto;
+  }
+
+  .product-info {
+    padding: 12px;
+  }
+
+  .product-name {
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .product-price-tag {
+    font-size: 1.1rem;
+  }
+
+  .btn-add-cart {
+    padding: 8px 12px;
+    font-size: 0.8rem;
   }
 
   .contact-grid {
