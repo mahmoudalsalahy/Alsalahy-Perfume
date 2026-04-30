@@ -66,5 +66,5 @@ CREATE POLICY "Anyone can read products"
 -- =============================================
 -- Update Product Prices
 -- =============================================
-UPDATE products SET price = 300, original_price = 350;
+UPDATE products SET price = 300, original_price_50ml = 350;
 

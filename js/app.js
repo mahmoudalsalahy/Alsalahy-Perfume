@@ -95,7 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.supabaseClient.from('products').select('*')
       .then(({ data, error }) => {
         if (!error && data && data.length > 0) {
-          products = data;
+          // Normalize data (handle snake_case from DB)
+          products = data.map(p => ({
+            ...p,
+            price: p.price || p.price_50ml || 0,
+            originalPrice: p.originalPrice || p.original_price || p.original_price_50ml || 0,
+            name_ar: p.name_ar || p.nameAr,
+            name_en: p.name_en || p.nameEn,
+            desc_ar: p.desc_ar || p.descAr,
+            desc_en: p.desc_en || p.descEn,
+            notes_ar: p.notes_ar || p.notesAr,
+            notes_en: p.notes_en || p.notesEn
+          }));
           renderProducts(); // Refresh products with real data
         }
       })
@@ -158,8 +169,8 @@ function getDiscountPercentage(currentPrice, originalPrice) {
   return Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
 }
 
-function getProductPriceMarkup(product, price = product.price) {
-  const originalPrice = product.originalPrice;
+function getProductPriceMarkup(product, price = (product.price || product.price_50ml)) {
+  const originalPrice = product.originalPrice || product.original_price || product.original_price_50ml;
   const currency = i18n.t("product_currency");
 
   if (!originalPrice || originalPrice <= price) {
@@ -174,8 +185,8 @@ function getProductPriceMarkup(product, price = product.price) {
   `;
 }
 
-function getModalPriceMarkup(product, price = product.price) {
-  const originalPrice = product.originalPrice;
+function getModalPriceMarkup(product, price = (product.price || product.price_50ml)) {
+  const originalPrice = product.originalPrice || product.original_price || product.original_price_50ml;
   const currency = i18n.t("product_currency");
 
   if (!originalPrice || originalPrice <= price) {
@@ -197,7 +208,9 @@ function renderProducts() {
   container.innerHTML = products
     .map(
       (product, index) => {
-        const discountPercentage = getDiscountPercentage(product.price, product.originalPrice);
+        const currentPrice = product.price || product.price_50ml || 0;
+        const originalPrice = product.originalPrice || product.original_price || product.original_price_50ml || 0;
+        const discountPercentage = getDiscountPercentage(currentPrice, originalPrice);
         const sizesArray = product.sizes ? product.sizes : ["50 ml"];
         const sizeLabel = sizesArray[0] || "50 ml";
 
