@@ -148,8 +148,9 @@ class ShoppingCart {
     return true;
   }
 
-  removeItem(index) {
-    if (index >= 0 && index < this.items.length) {
+  removeItem(id, size) {
+    const index = this.items.findIndex(item => item.id === id && item.size === size);
+    if (index > -1) {
       this.items.splice(index, 1);
       this.saveToStorage();
       this.updateBadge();
@@ -158,10 +159,11 @@ class ShoppingCart {
     }
   }
 
-  updateQuantity(index, newQuantity) {
-    if (index >= 0 && index < this.items.length) {
+  updateQuantity(id, size, newQuantity) {
+    const index = this.items.findIndex(item => item.id === id && item.size === size);
+    if (index > -1) {
       if (newQuantity <= 0) {
-        this.removeItem(index);
+        this.removeItem(id, size);
         return;
       }
       this.items[index].quantity = newQuantity;
@@ -260,11 +262,11 @@ class ShoppingCart {
         </div>
         <div class="cart-item-actions">
           <div class="quantity-controls">
-            <button class="qty-btn" onclick="cart.updateQuantity(${index}, ${item.quantity - 1})">−</button>
+            <button class="qty-btn" onclick="cart.updateQuantity(${item.id}, '${item.size}', ${item.quantity - 1})">−</button>
             <span class="qty-value">${item.quantity}</span>
-            <button class="qty-btn" onclick="cart.updateQuantity(${index}, ${item.quantity + 1})">+</button>
+            <button class="qty-btn" onclick="cart.updateQuantity(${item.id}, '${item.size}', ${item.quantity + 1})">+</button>
           </div>
-          <button class="cart-item-remove" onclick="cart.removeItem(${index})">
+          <button class="cart-item-remove" onclick="cart.removeItem(${item.id}, '${item.size}')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
           </button>
         </div>
