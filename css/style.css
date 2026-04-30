@@ -3,8 +3,30 @@
    Color Palette: Dark/Black, Silver, Gold
    =================================================== */
 
-/* === Google Fonts === */
-@import url("https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap");
+/* === Thmanyah Fonts === */
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('../fonts/ThmanyahSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Thmanyah Sans';
+  src: url('../fonts/ThmanyahSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Thmanyah Display';
+  src: url('../fonts/ThmanyahSerifDisplay-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 /* === CSS Custom Properties (Design Tokens) === */
 :root {
@@ -38,8 +60,9 @@
   --info: #b0b0b0;
 
   /* Typography */
-  --font-ar: "Tajawal", sans-serif;
-  --font-en: "Playfair Display", serif;
+  --font-ar: "Thmanyah Sans", sans-serif;
+  --font-en: "Thmanyah Sans", sans-serif;
+  --font-heading: "Thmanyah Display", serif;
 
   /* Spacing */
   --section-padding: 100px 0;
@@ -473,6 +496,7 @@ textarea {
 }
 
 .hero-title {
+  font-family: var(--font-heading);
   font-size: 3.5rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -657,6 +681,7 @@ textarea {
 }
 
 .section-title {
+  font-family: var(--font-heading);
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -835,6 +860,7 @@ textarea {
 }
 
 .product-name {
+  font-family: var(--font-heading);
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -1000,6 +1026,7 @@ textarea {
 }
 
 .modal-product-name {
+  font-family: var(--font-heading);
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-primary);
@@ -2588,6 +2615,7 @@ textarea.contact-input {
 }
 
 .coming-soon-title {
+  font-family: var(--font-heading);
   font-size: 3rem;
   font-weight: 700;
   color: var(--gold);
