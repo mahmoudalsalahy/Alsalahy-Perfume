@@ -63,25 +63,6 @@ class NotificationSystem {
 
     notification._timer = timer;
 
-    // Pause on hover
-    notification.addEventListener("mouseenter", () => {
-      clearTimeout(notification._timer);
-      const progressBar = notification.querySelector(
-        ".notification-progress-bar"
-      );
-      if (progressBar) progressBar.style.animationPlayState = "paused";
-    });
-
-    notification.addEventListener("mouseleave", () => {
-      const progressBar = notification.querySelector(
-        ".notification-progress-bar"
-      );
-      if (progressBar) progressBar.style.animationPlayState = "running";
-      notification._timer = setTimeout(() => {
-        this.dismiss(notification);
-      }, 1000);
-    });
-
     return notification;
   }
 
