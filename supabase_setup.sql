@@ -68,3 +68,9 @@ CREATE POLICY "Anyone can read products"
 -- =============================================
 UPDATE products SET price = 300, original_price_50ml = 350;
 
+-- =============================================
+-- Add Cart column to users table
+-- =============================================
+ALTER TABLE users ADD COLUMN IF NOT EXISTS cart JSONB DEFAULT '[]'::JSONB;
+
+

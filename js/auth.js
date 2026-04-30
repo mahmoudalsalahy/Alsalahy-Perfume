@@ -45,6 +45,9 @@ class AuthSystem {
       phone
     };
     this.updateUI();
+    
+    // Load saved cart from cloud
+    if (window.cart) window.cart.loadFromSupabase();
 
     // Save/update user profile in Supabase users table
     try {
@@ -136,6 +139,12 @@ class AuthSystem {
     await window.supabaseClient.auth.signOut();
     this.currentUser = null;
     this.updateUI();
+    if (window.cart) {
+      window.cart.items = [];
+      window.cart.saveToStorage();
+      window.cart.updateBadge();
+      window.cart.notifyListeners();
+    }
     notificationSystem.info(i18n.t("notif_logout_success"));
   }
 

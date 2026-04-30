@@ -28,6 +28,53 @@ class ShoppingCart {
 
   saveToStorage() {
     localStorage.setItem("alsalahy_cart", JSON.stringify(this.items));
+    this.saveToSupabase();
+  }
+
+  async saveToSupabase() {
+    if (window.auth && window.auth.isLoggedIn()) {
+      try {
+        const { error } = await window.supabaseClient
+          .from('users')
+          .update({ cart: this.items })
+          .eq('id', window.auth.currentUser.id);
+        
+        if (error) console.error("Error saving cart to Supabase:", error);
+      } catch (e) {
+        console.error("Cart Supabase error:", e);
+      }
+    }
+  }
+
+  async loadFromSupabase() {
+    if (window.auth && window.auth.isLoggedIn()) {
+      try {
+        const { data, error } = await window.supabaseClient
+          .from('users')
+          .select('cart')
+          .eq('id', window.auth.currentUser.id)
+          .single();
+        
+        if (!error && data && data.cart) {
+          // Merge or replace? User expects their saved cart. 
+          // Let's merge for a better experience, or replace if current is empty.
+          if (this.items.length === 0) {
+            this.items = data.cart;
+          } else {
+            // Simple merge logic: add only items not already in cart
+            data.cart.forEach(savedItem => {
+              const exists = this.items.some(i => i.id === savedItem.id && i.size === savedItem.size);
+              if (!exists) this.items.push(savedItem);
+            });
+          }
+          this.saveToStorage();
+          this.updateBadge();
+          this.notifyListeners();
+        }
+      } catch (e) {
+        console.error("Cart load Supabase error:", e);
+      }
+    }
   }
 
   addItem(product, size = "50 ml", quantity = 1) {
