@@ -538,9 +538,17 @@ function renderOrders(orders) {
   }
 
   listContainer.innerHTML = orders.map(order => {
-    const date = new Date(order.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
+    const dateObj = new Date(order.created_at);
+    const dateStr = dateObj.toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      timeZone: 'Africa/Cairo'
     });
+    const timeStr = dateObj.toLocaleTimeString(lang === 'ar' ? 'ar-EG' : 'en-US', {
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'Africa/Cairo'
+    });
+
+    const dateTimeStr = lang === 'ar' ? `${dateStr} - ${timeStr}` : `${dateStr} | ${timeStr}`;
 
     const itemsHtml = order.order_items.map(item => `
       <div class="order-item">
@@ -554,7 +562,7 @@ function renderOrders(orders) {
         <div class="order-card-header">
           <div>
             <div class="order-id">طلب #${order.id.toString().slice(-6).toUpperCase()}</div>
-            <div class="order-date">${date}</div>
+            <div class="order-date">${dateTimeStr}</div>
           </div>
           <div class="order-status status-${order.status}">${getStatusLabel(order.status)}</div>
         </div>

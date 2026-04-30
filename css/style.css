@@ -1757,16 +1757,31 @@ textarea.order-input {
 }
 
 .order-status {
-  padding: 4px 10px;
-  border-radius: 20px;
+  padding: 4px 12px;
+  border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  height: fit-content;
+  border: 1px solid transparent;
 }
 
-.status-pending { background: rgba(201, 168, 76, 0.2); color: var(--gold); }
-.status-completed { background: rgba(76, 175, 80, 0.2); color: var(--success); }
-.status-cancelled { background: rgba(244, 67, 54, 0.2); color: var(--error); }
+.status-pending { 
+  background: rgba(201, 168, 76, 0.1); 
+  color: var(--gold);
+  border-color: rgba(201, 168, 76, 0.2);
+}
+.status-completed { 
+  background: rgba(76, 175, 80, 0.1); 
+  color: var(--success);
+  border-color: rgba(76, 175, 80, 0.2);
+}
+.status-cancelled { 
+  background: rgba(244, 67, 54, 0.1); 
+  color: var(--error);
+  border-color: rgba(244, 67, 54, 0.2);
+}
 
 .order-items-list {
   display: flex;
