@@ -483,29 +483,7 @@ async function handleOrderSubmit(e) {
       if (itemsError) throw itemsError;
     }
 
-    // 3. Send WhatsApp notification with order details
-    const itemsList = cart.items.map((item, i) => {
-      const itemName = item.name_ar || item.name_en;
-      return `  ${i + 1}. ${itemName} | ${item.size} | ×${item.quantity} | ${item.price * item.quantity} جنيه`;
-    }).join('\n');
 
-    const whatsappMsg = 
-`🛒 *طلب جديد #${orderId}*
-━━━━━━━━━━━━━━━
-👤 *الاسم:* ${name}
-📞 *الهاتف:* ${phone}
-🏙️ *المدينة:* ${city}
-📍 *العنوان:* ${address}
-${notes ? `📝 *ملاحظات:* ${notes}` : ''}
-━━━━━━━━━━━━━━━
-📦 *المنتجات:*
-${itemsList}
-━━━━━━━━━━━━━━━
-💰 *الإجمالي:* ${total} جنيه
-━━━━━━━━━━━━━━━`;
-
-    const whatsappUrl = `https://wa.me/201558118597?text=${encodeURIComponent(whatsappMsg)}`;
-    window.open(whatsappUrl, '_blank');
 
     // Show success
     const successView = document.getElementById("order-success");
