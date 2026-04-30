@@ -143,14 +143,17 @@ class AuthSystem {
     const loginBtn = document.getElementById("auth-login-btn");
     const userMenu = document.getElementById("user-menu");
     const userName = document.getElementById("user-name");
+    const mobileOrdersBtn = document.getElementById("mobile-show-orders-btn");
 
     if (this.isLoggedIn()) {
       if (loginBtn) loginBtn.style.display = "none";
       if (userMenu) userMenu.style.display = "flex";
       if (userName) userName.textContent = this.currentUser.name;
+      if (mobileOrdersBtn) mobileOrdersBtn.style.display = "block";
     } else {
       if (loginBtn) loginBtn.style.display = "flex";
       if (userMenu) userMenu.style.display = "none";
+      if (mobileOrdersBtn) mobileOrdersBtn.style.display = "none";
     }
   }
 

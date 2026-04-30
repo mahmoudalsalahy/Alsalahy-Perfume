@@ -76,6 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupAuthModal();
   setupProductCards(); // Render fallback items visually immediately
   setupOrderModal();
+  setupOrdersModal();
   setupContactForm();
   setupMobileMenu();
 
@@ -428,6 +429,122 @@ function closeOrderModal() {
     if (successView) successView.style.display = "none";
     if (formView) formView.style.display = "block";
   }, 300);
+}
+
+// ===== Orders History Modal =====
+function setupOrdersModal() {
+  const showBtn = document.getElementById("show-orders-btn");
+  const mobileShowBtn = document.getElementById("mobile-show-orders-btn");
+  const closeBtn = document.getElementById("orders-close-btn");
+  const overlay = document.getElementById("orders-overlay");
+
+  showBtn?.addEventListener("click", openOrdersModal);
+  mobileShowBtn?.addEventListener("click", openOrdersModal);
+  closeBtn?.addEventListener("click", closeOrdersModal);
+  overlay?.addEventListener("click", closeOrdersModal);
+}
+
+async function openOrdersModal() {
+  if (!window.auth || !window.auth.isLoggedIn()) {
+    notificationSystem.warning(i18n.t("notif_login_required") || "يجب تسجيل الدخول لمشاهدة طلباتك.");
+    auth.openModal("login");
+    return;
+  }
+
+  const modal = document.getElementById("orders-modal");
+  const overlay = document.getElementById("orders-overlay");
+  const listContainer = document.getElementById("orders-list");
+
+  modal.classList.add("modal-open");
+  overlay.classList.add("overlay-visible");
+  document.body.style.overflow = "hidden";
+
+  listContainer.innerHTML = '<div class="orders-loading">جاري تحميل الطلبات...</div>';
+
+  try {
+    const orders = await fetchUserOrders(window.auth.currentUser.id);
+    renderOrders(orders);
+  } catch (err) {
+    console.error("Fetch orders error:", err);
+    listContainer.innerHTML = '<div class="orders-error">حدث خطأ أثناء تحميل الطلبات.</div>';
+  }
+}
+
+function closeOrdersModal() {
+  const modal = document.getElementById("orders-modal");
+  const overlay = document.getElementById("orders-overlay");
+  modal.classList.remove("modal-open");
+  overlay.classList.remove("overlay-visible");
+  document.body.style.overflow = "";
+}
+
+async function fetchUserOrders(userId) {
+  // Fetch orders with their items
+  const { data, error } = await window.supabaseClient
+    .from('orders')
+    .select(`
+      *,
+      order_items (
+        *,
+        products (name_ar, name_en)
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+function renderOrders(orders) {
+  const listContainer = document.getElementById("orders-list");
+  const lang = i18n.getCurrentLang();
+
+  if (!orders || orders.length === 0) {
+    listContainer.innerHTML = '<div class="orders-empty">ليس لديك أي طلبات سابقة.</div>';
+    return;
+  }
+
+  listContainer.innerHTML = orders.map(order => {
+    const date = new Date(order.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    const itemsHtml = order.order_items.map(item => `
+      <div class="order-item">
+        <span>${lang === 'ar' ? (item.products?.name_ar || 'منتج') : (item.products?.name_en || 'Product')} (${item.size}) × ${item.quantity}</span>
+        <span>${item.price * item.quantity} ${i18n.t("product_currency")}</span>
+      </div>
+    `).join('');
+
+    return `
+      <div class="order-card">
+        <div class="order-card-header">
+          <div>
+            <div class="order-id">طلب #${order.id.toString().slice(-6).toUpperCase()}</div>
+            <div class="order-date">${date}</div>
+          </div>
+          <div class="order-status status-${order.status}">${getStatusLabel(order.status)}</div>
+        </div>
+        <div class="order-items-list">
+          ${itemsHtml}
+        </div>
+        <div class="order-card-footer">
+          <span class="order-total-label">الإجمالي</span>
+          <span>${order.total} ${i18n.t("product_currency")}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function getStatusLabel(status) {
+  const labels = {
+    'pending': 'قيد الانتظار',
+    'completed': 'تم التوصيل',
+    'cancelled': 'ملغي'
+  };
+  return labels[status] || status;
 }
 
 async function handleOrderSubmit(e) {

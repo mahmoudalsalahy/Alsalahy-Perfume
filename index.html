@@ -45,6 +45,7 @@
         <!-- User Menu (shown when logged in) -->
         <div class="user-menu" id="user-menu">
           <span class="user-name" id="user-name"></span>
+          <button class="orders-btn" id="show-orders-btn">طلباتي</button>
           <button id="logout-btn" data-i18n="nav_logout">تسجيل الخروج</button>
         </div>
 
@@ -64,6 +65,7 @@
     <a href="#products" class="nav-link" data-i18n="nav_products">العطور</a>
     <a href="#about" class="nav-link" data-i18n="nav_about">من نحن</a>
     <a href="#contact" class="nav-link" data-i18n="nav_contact">تواصل معنا</a>
+    <button class="mobile-orders-btn" id="mobile-show-orders-btn">طلباتي</button>
   </div>
 
   <!-- ============ HERO SECTION ============ -->
@@ -463,6 +465,20 @@
         <a id="switch-to-login" data-i18n="auth_login_btn">تسجيل الدخول</a>
       </div>
     </form>
+  </div>
+
+  <!-- ============ ORDERS MODAL ============ -->
+  <div class="modal-overlay" id="orders-overlay"></div>
+  <div class="orders-modal" id="orders-modal">
+    <div class="orders-modal-header">
+      <h3 class="orders-modal-title">طلباتي السابقة</h3>
+      <button class="modal-close-btn" id="orders-close-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="orders-list-container" id="orders-list">
+      <div class="orders-loading">جاري تحميل الطلبات...</div>
+    </div>
   </div>
 
   <!-- ============ SCROLL TO TOP ============ -->
