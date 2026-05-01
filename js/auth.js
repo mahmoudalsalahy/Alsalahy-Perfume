@@ -54,12 +54,14 @@ class AuthSystem {
 
     // Save/update user profile in Supabase users table
     try {
-      await window.supabaseClient.from('users').upsert({
+      const { error } = await window.supabaseClient.from('users').upsert({
         id: user.id,
         name,
         email: user.email,
         phone
       }, { onConflict: 'id' });
+
+      if (error) throw error;
     } catch (err) {
       console.error("Error saving user to database:", err);
     }
@@ -71,10 +73,12 @@ class AuthSystem {
 
   async register(name, email, phone, password) {
     try {
+      const normalizedEmail = email.trim().toLowerCase();
       const { data, error } = await window.supabaseClient.auth.signUp({
-        email,
+        email: normalizedEmail,
         password,
         options: {
+          emailRedirectTo: window.location.origin + window.location.pathname,
           data: {
             name,
             phone
@@ -84,11 +88,13 @@ class AuthSystem {
 
       if (error) throw error;
 
-      this.closeModal();
       if (data.session) {
+        await this.saveUserFromSession(data.user);
+        this.closeModal();
         notificationSystem.success(i18n.t("notif_register_success") || "تم التسجيل بنجاح");
       } else {
-        notificationSystem.success(i18n.t("notif_register_success") || "تم التسجيل. تحقق من بريدك الإلكتروني.");
+        this.closeModal();
+        notificationSystem.success(i18n.t("notif_register_check_email"));
       }
       return true;
     } catch (err) {
@@ -101,7 +107,7 @@ class AuthSystem {
   async login(email, password) {
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(),
         password
       });
 

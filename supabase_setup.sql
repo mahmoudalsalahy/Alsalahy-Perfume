@@ -23,6 +23,97 @@ ALTER TABLE order_items
 -- RLS Policies
 -- =============================================
 
+-- Users profile table, used by auth, saved carts, and order prefill.
+CREATE TABLE IF NOT EXISTS public.users (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT,
+  email TEXT UNIQUE,
+  phone TEXT,
+  cart JSONB NOT NULL DEFAULT '[]'::JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS cart JSONB DEFAULT '[]'::JSONB;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT NOW();
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+CREATE UNIQUE INDEX IF NOT EXISTS users_id_unique ON public.users (id);
+
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can read own profile" ON public.users;
+CREATE POLICY "Users can read own profile"
+  ON public.users FOR SELECT
+  USING (auth.uid()::text = id::text);
+
+DROP POLICY IF EXISTS "Users can insert own profile" ON public.users;
+CREATE POLICY "Users can insert own profile"
+  ON public.users FOR INSERT
+  WITH CHECK (auth.uid()::text = id::text);
+
+DROP POLICY IF EXISTS "Users can update own profile" ON public.users;
+CREATE POLICY "Users can update own profile"
+  ON public.users FOR UPDATE
+  USING (auth.uid()::text = id::text)
+  WITH CHECK (auth.uid()::text = id::text);
+
+CREATE OR REPLACE FUNCTION public.handle_auth_user_profile()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO public.users (id, name, email, phone, updated_at)
+  VALUES (
+    NEW.id,
+    COALESCE(
+      NEW.raw_user_meta_data->>'name',
+      NEW.raw_user_meta_data->>'full_name',
+      split_part(NEW.email, '@', 1),
+      'User'
+    ),
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'phone', ''),
+    NOW()
+  )
+  ON CONFLICT (id) DO UPDATE SET
+    name = COALESCE(EXCLUDED.name, public.users.name),
+    email = COALESCE(EXCLUDED.email, public.users.email),
+    phone = COALESCE(EXCLUDED.phone, public.users.phone),
+    updated_at = NOW();
+
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_profile_saved ON auth.users;
+CREATE TRIGGER on_auth_user_profile_saved
+  AFTER INSERT OR UPDATE OF email, raw_user_meta_data ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_auth_user_profile();
+
+INSERT INTO public.users (id, name, email, phone, updated_at)
+SELECT
+  id,
+  COALESCE(
+    raw_user_meta_data->>'name',
+    raw_user_meta_data->>'full_name',
+    split_part(email, '@', 1),
+    'User'
+  ),
+  email,
+  COALESCE(raw_user_meta_data->>'phone', ''),
+  NOW()
+FROM auth.users
+ON CONFLICT (id) DO UPDATE SET
+  name = COALESCE(EXCLUDED.name, public.users.name),
+  email = COALESCE(EXCLUDED.email, public.users.email),
+  phone = COALESCE(EXCLUDED.phone, public.users.phone),
+  updated_at = NOW();
+
 -- Enable RLS on orders
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
@@ -71,12 +162,15 @@ UPDATE products SET price = 300, original_price_50ml = 350;
 -- =============================================
 -- Add Cart column to users table
 -- =============================================
-ALTER TABLE users ADD COLUMN IF NOT EXISTS cart JSONB DEFAULT '[]'::JSONB;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS cart JSONB DEFAULT '[]'::JSONB;
 
 -- =============================================
 -- Enable Realtime for Cart Sync
 -- =============================================
-ALTER PUBLICATION supabase_realtime ADD TABLE users;
-
-
-
+DO $$
+BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE public.users;
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END;
+$$;
