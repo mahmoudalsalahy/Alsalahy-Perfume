@@ -72,22 +72,22 @@ async function verifyAdmin() {
 }
 
 function showAdminLogin() {
+  document.querySelector(".admin-shell").classList.add("admin-auth-mode");
   document.getElementById("admin-login-panel").hidden = false;
   document.getElementById("admin-content").hidden = true;
   document.getElementById("admin-sidebar").hidden = true;
   document.getElementById("admin-topbar").hidden = true;
   document.querySelector(".admin-sidebar-footer").style.display = "none";
-  document.querySelector(".admin-shell").style.gridTemplateColumns = "1fr";
 }
 
 function showAdminDashboard() {
+  document.querySelector(".admin-shell").classList.remove("admin-auth-mode");
   document.getElementById("admin-login-panel").hidden = true;
   document.getElementById("admin-content").hidden = false;
   document.getElementById("admin-sidebar").hidden = false;
   document.getElementById("admin-topbar").hidden = false;
   document.querySelector(".admin-sidebar-footer").style.display = "flex";
   document.getElementById("admin-email").textContent = adminState.session.user.email;
-  document.querySelector(".admin-shell").style.gridTemplateColumns = "280px 1fr";
 }
 
 async function handleAdminLogin(event) {
