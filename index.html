@@ -351,6 +351,39 @@
           <textarea class="order-input" id="order-notes" data-i18n="order_notes" placeholder="ملاحظات إضافية"></textarea>
         </div>
 
+        <div class="order-payment-section">
+          <h4 class="order-payment-title" data-i18n="payment_title">طريقة الدفع</h4>
+          <div class="payment-methods" role="radiogroup" aria-label="Payment method">
+            <button type="button" class="payment-method-btn" data-payment-method="instapay" aria-pressed="false">
+              <span class="payment-method-icon payment-method-icon-instapay">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/><path d="M5 6v12"/></svg>
+              </span>
+              <span data-i18n="payment_instapay">InstaPay</span>
+            </button>
+            <button type="button" class="payment-method-btn" data-payment-method="vodafone_cash" aria-pressed="false">
+              <span class="payment-method-icon payment-method-icon-vodafone">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3h8a2 2 0 012 2v14a2 2 0 01-2 2H8a2 2 0 01-2-2V5a2 2 0 012-2z"/><path d="M10 18h4"/><path d="M9 7h6v7H9z"/></svg>
+              </span>
+              <span data-i18n="payment_vodafone">Vodafone Cash</span>
+            </button>
+          </div>
+
+          <div class="payment-details" id="instapay-details">
+            <a class="payment-link" id="instapay-payment-link" href="https://ipn.eg/S/alsalahyperfune/instapay/9Oyyss" target="_blank" rel="noopener" data-i18n="payment_instapay_open">افتح رابط InstaPay</a>
+          </div>
+
+          <div class="payment-details" id="vodafone-details">
+            <span class="payment-phone-label" data-i18n="payment_vodafone_number">رقم فودافون كاش</span>
+            <strong class="payment-phone-value" dir="ltr">+20 155 811 8597</strong>
+          </div>
+
+          <div class="order-form-group payment-proof-group">
+            <label for="payment-proof" data-i18n="payment_proof">صورة إثبات الدفع</label>
+            <input type="file" class="order-input payment-proof-input" id="payment-proof" accept="image/*" required>
+            <span class="payment-proof-hint" data-i18n="payment_proof_hint">ارفع Screenshot أو صورة إيصال الدفع.</span>
+          </div>
+        </div>
+
         <!-- Order Summary -->
         <div class="order-summary">
           <h4 class="order-summary-title" data-i18n="order_summary">ملخص الطلب</h4>

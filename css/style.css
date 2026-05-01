@@ -1571,6 +1571,129 @@ textarea.order-input {
   resize: vertical;
 }
 
+.order-payment-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.order-payment-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.payment-method-btn {
+  min-height: 76px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.payment-method-btn:hover,
+.payment-method-btn.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.18);
+  transform: translateY(-1px);
+}
+
+.payment-method-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-round);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-method-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.payment-method-icon-instapay {
+  color: #6b4cff;
+  background: rgba(107, 76, 255, 0.14);
+}
+
+.payment-method-icon-vodafone {
+  color: #e60000;
+  background: rgba(230, 0, 0, 0.14);
+}
+
+.payment-details {
+  display: none;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.payment-details.active {
+  display: block;
+}
+
+.payment-link {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.payment-phone-label,
+.payment-proof-hint {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.payment-phone-value {
+  display: block;
+  margin-top: 6px;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+.payment-proof-group {
+  margin: 14px 0 0;
+}
+
+.payment-proof-input {
+  padding: 10px 12px;
+}
+
+.payment-proof-input::file-selector-button {
+  margin-inline-end: 10px;
+  padding: 8px 12px;
+  background: var(--gold-gradient);
+  color: var(--bg-primary);
+  border: 0;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* Order Summary */
 .order-summary {
   background: var(--bg-tertiary);
@@ -1627,6 +1750,13 @@ textarea.order-input {
 .btn-order-submit:hover {
   box-shadow: var(--shadow-gold);
   transform: translateY(-1px);
+}
+
+.btn-order-submit:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-order-cancel {

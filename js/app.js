@@ -379,6 +379,9 @@ function setupCartDrawer() {
 }
 
 // ===== Order Modal =====
+const INSTAPAY_PAYMENT_URL = "https://ipn.eg/S/alsalahyperfune/instapay/9Oyyss";
+const PAYMENT_PROOFS_BUCKET = "payment-proofs";
+
 function setupOrderModal() {
   const cancelBtn = document.getElementById("order-cancel-btn");
   const overlay = document.getElementById("order-overlay");
@@ -388,6 +391,10 @@ function setupOrderModal() {
 
   const form = document.getElementById("order-form");
   form?.addEventListener("submit", handleOrderSubmit);
+
+  document.querySelectorAll(".payment-method-btn").forEach((btn) => {
+    btn.addEventListener("click", () => selectPaymentMethod(btn.dataset.paymentMethod));
+  });
 }
 
 function openOrderModal() {
@@ -415,6 +422,7 @@ function openOrderModal() {
     .join("");
 
   document.getElementById("order-total-amount").textContent = `${cart.getTotal()} ${i18n.t("product_currency")}`;
+  resetPaymentSelection();
 
   // Pre-fill if logged in
   if (window.auth && window.auth.isLoggedIn()) {
@@ -442,6 +450,35 @@ function closeOrderModal() {
     if (successView) successView.style.display = "none";
     if (formView) formView.style.display = "block";
   }, 300);
+}
+
+function selectPaymentMethod(method) {
+  document.querySelectorAll(".payment-method-btn").forEach((btn) => {
+    const isActive = btn.dataset.paymentMethod === method;
+    btn.classList.toggle("active", isActive);
+    btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+
+  document.getElementById("instapay-details")?.classList.toggle("active", method === "instapay");
+  document.getElementById("vodafone-details")?.classList.toggle("active", method === "vodafone_cash");
+
+  if (method === "instapay") {
+    window.open(INSTAPAY_PAYMENT_URL, "_blank", "noopener");
+  }
+}
+
+function getSelectedPaymentMethod() {
+  return document.querySelector(".payment-method-btn.active")?.dataset.paymentMethod || "";
+}
+
+function resetPaymentSelection() {
+  document.querySelectorAll(".payment-method-btn").forEach((btn) => {
+    btn.classList.remove("active");
+    btn.setAttribute("aria-pressed", "false");
+  });
+  document.querySelectorAll(".payment-details").forEach((details) => details.classList.remove("active"));
+  const proofInput = document.getElementById("payment-proof");
+  if (proofInput) proofInput.value = "";
 }
 
 // ===== Orders History Modal =====
@@ -600,6 +637,25 @@ function getStatusLabel(status) {
   return labels[status] || status;
 }
 
+async function uploadPaymentProof(file, userId) {
+  const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+  const safeExtension = extension.replace(/[^a-z0-9]/g, "") || "jpg";
+  const owner = userId || "guest";
+  const randomId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2);
+  const filePath = `${owner}/${Date.now()}-${randomId}.${safeExtension}`;
+
+  const { error } = await window.supabaseClient.storage
+    .from(PAYMENT_PROOFS_BUCKET)
+    .upload(filePath, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type || "image/jpeg"
+    });
+
+  if (error) throw error;
+  return filePath;
+}
+
 async function handleOrderSubmit(e) {
   e.preventDefault();
 
@@ -608,15 +664,35 @@ async function handleOrderSubmit(e) {
   const address = document.getElementById("order-address").value.trim();
   const city = document.getElementById("order-city").value.trim();
   const notes = document.getElementById("order-notes")?.value.trim() || "";
+  const payment_method = getSelectedPaymentMethod();
+  const paymentProofFile = document.getElementById("payment-proof")?.files?.[0];
 
   if (!name || !phone || !address || !city) {
     notificationSystem.warning(i18n.t("notif_fill_fields"));
     return;
   }
 
+  if (!payment_method) {
+    notificationSystem.warning(i18n.t("notif_payment_method_required"));
+    return;
+  }
+
+  if (!paymentProofFile) {
+    notificationSystem.warning(i18n.t("notif_payment_proof_required"));
+    return;
+  }
+
+  if (!paymentProofFile.type.startsWith("image/")) {
+    notificationSystem.warning(i18n.t("notif_payment_proof_image"));
+    return;
+  }
+
   try {
     const total = cart.getTotal();
     const user_id = window.auth && window.auth.currentUser ? window.auth.currentUser.id : null;
+    const submitBtn = document.querySelector(".btn-order-submit");
+    if (submitBtn) submitBtn.disabled = true;
+    const payment_proof_path = await uploadPaymentProof(paymentProofFile, user_id);
     
     // 1. Insert Order Status
     const { data: orderData, error: orderError } = await window.supabaseClient
@@ -629,6 +705,9 @@ async function handleOrderSubmit(e) {
         city,
         notes,
         total,
+        payment_method,
+        payment_status: 'pending_review',
+        payment_proof_path,
         status: 'pending'
       }])
       .select();
@@ -675,10 +754,14 @@ async function handleOrderSubmit(e) {
 
     // Reset form
     document.getElementById("order-form").reset();
+    resetPaymentSelection();
 
   } catch (err) {
     console.error("Order submit error:", err);
-    notificationSystem.error(i18n.t("notif_login_error") || "حدث خطأ أثناء إرسال الطلب. حاول مجدداً.");
+    notificationSystem.error(i18n.t("notif_order_error"));
+  } finally {
+    const submitBtn = document.querySelector(".btn-order-submit");
+    if (submitBtn) submitBtn.disabled = false;
   }
 }
 
