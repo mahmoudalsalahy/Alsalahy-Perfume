@@ -93,8 +93,11 @@ class AuthSystem {
         this.closeModal();
         notificationSystem.success(i18n.t("notif_register_success") || "تم التسجيل بنجاح");
       } else {
-        this.closeModal();
-        notificationSystem.success(i18n.t("notif_register_check_email"));
+        const signedIn = await this.loginAfterRegister(normalizedEmail, password);
+        if (!signedIn) {
+          this.closeModal();
+          notificationSystem.warning(i18n.t("notif_register_confirmation_enabled"));
+        }
       }
       return true;
     } catch (err) {
@@ -148,6 +151,28 @@ class AuthSystem {
 
   isEmailRateLimitError(message) {
     return message.includes("rate limit") || message.includes("email rate") || message.includes("too many");
+  }
+
+  async loginAfterRegister(email, password) {
+    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      const message = (error.message || "").toLowerCase();
+      if (message.includes("email not confirmed")) return false;
+      throw error;
+    }
+
+    if (data.session && data.user) {
+      await this.saveUserFromSession(data.user);
+      this.closeModal();
+      notificationSystem.success(i18n.t("notif_register_success"));
+      return true;
+    }
+
+    return false;
   }
 
   async loginWithGoogle() {
