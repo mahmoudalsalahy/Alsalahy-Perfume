@@ -173,7 +173,8 @@ CREATE POLICY "Anyone can read product images"
   TO anon, authenticated
   USING (bucket_id = 'product-images');
 
--- Replace this email with the Supabase Auth user email that should access /admin.html.
--- Run it after creating/signing up that user.
--- INSERT INTO public.admin_users (email) VALUES ('admin@example.com')
--- ON CONFLICT (email) DO UPDATE SET active = true;
+-- Admin account allowed to access /admin.html.
+-- Create this user in Supabase Authentication with the password you chose,
+-- then run this insert to grant dashboard access.
+INSERT INTO public.admin_users (email) VALUES ('alsalahyperfume@admin.com')
+ON CONFLICT (email) DO UPDATE SET active = true;

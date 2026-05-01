@@ -3,6 +3,8 @@
  * Email/Phone/Google login/register with Supabase Auth
  */
 
+const ADMIN_EMAIL = "alsalahyperfume@admin.com";
+
 class AuthSystem {
   constructor() {
     this.currentUser = null;
@@ -125,6 +127,11 @@ class AuthSystem {
 
       this.closeModal();
       notificationSystem.success(i18n.t("notif_login_success"));
+
+      if (normalizedEmail === ADMIN_EMAIL) {
+        window.location.href = "admin.html";
+      }
+
       return true;
     } catch (err) {
       console.error(err);
