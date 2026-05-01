@@ -653,7 +653,15 @@ async function uploadPaymentProof(file, userId) {
     });
 
   if (error) throw error;
-  return filePath;
+
+  const { data } = window.supabaseClient.storage
+    .from(PAYMENT_PROOFS_BUCKET)
+    .getPublicUrl(filePath);
+
+  return {
+    path: filePath,
+    url: data.publicUrl
+  };
 }
 
 async function handleOrderSubmit(e) {
@@ -692,7 +700,7 @@ async function handleOrderSubmit(e) {
     const user_id = window.auth && window.auth.currentUser ? window.auth.currentUser.id : null;
     const submitBtn = document.querySelector(".btn-order-submit");
     if (submitBtn) submitBtn.disabled = true;
-    const payment_proof_path = await uploadPaymentProof(paymentProofFile, user_id);
+    const paymentProof = await uploadPaymentProof(paymentProofFile, user_id);
     
     // 1. Insert Order Status
     const { data: orderData, error: orderError } = await window.supabaseClient
@@ -707,7 +715,8 @@ async function handleOrderSubmit(e) {
         total,
         payment_method,
         payment_status: 'pending_review',
-        payment_proof_path,
+        payment_proof_path: paymentProof.path,
+        payment_proof_url: paymentProof.url,
         status: 'pending'
       }])
       .select();

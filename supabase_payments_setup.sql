@@ -5,6 +5,7 @@ ALTER TABLE public.orders
   ADD COLUMN IF NOT EXISTS payment_method TEXT,
   ADD COLUMN IF NOT EXISTS payment_status TEXT NOT NULL DEFAULT 'pending_review',
   ADD COLUMN IF NOT EXISTS payment_proof_path TEXT,
+  ADD COLUMN IF NOT EXISTS payment_proof_url TEXT,
   ADD COLUMN IF NOT EXISTS payment_reviewed_at TIMESTAMPTZ;
 
 ALTER TABLE public.orders
@@ -30,7 +31,7 @@ INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 VALUES (
   'payment-proofs',
   'payment-proofs',
-  false,
+  true,
   5242880,
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
@@ -45,3 +46,8 @@ CREATE POLICY "Anyone can upload payment proofs"
   TO anon, authenticated
   WITH CHECK (bucket_id = 'payment-proofs');
 
+DROP POLICY IF EXISTS "Anyone can read payment proofs" ON storage.objects;
+CREATE POLICY "Anyone can read payment proofs"
+  ON storage.objects FOR SELECT
+  TO anon, authenticated
+  USING (bucket_id = 'payment-proofs');
