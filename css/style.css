@@ -192,11 +192,16 @@ textarea {
   border-bottom: 1px solid var(--border-color);
 }
 
+.main-header .container {
+  padding: 0 50px;
+}
+
 .header-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 0;
+  gap: 32px;
   transition: padding var(--transition-normal);
 }
 
@@ -232,7 +237,7 @@ textarea {
 .nav-desktop {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 48px;
 }
 
 .nav-link {
@@ -269,7 +274,7 @@ textarea {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .lang-toggle-btn {
@@ -353,7 +358,7 @@ textarea {
 .user-menu {
   display: none;
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .user-name {
@@ -377,9 +382,10 @@ textarea {
   background: rgba(201, 168, 76, 0.1);
   color: var(--gold);
   border: 1px solid var(--border-color);
-  padding: 4px 12px;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
