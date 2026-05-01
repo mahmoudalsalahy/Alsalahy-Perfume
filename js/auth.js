@@ -216,11 +216,20 @@ class AuthSystem {
     const userName = document.getElementById("user-name");
     const mobileOrdersBtn = document.getElementById("mobile-show-orders-btn");
 
+    const isAdmin = this.currentUser && this.currentUser.email === ADMIN_EMAIL;
+
     if (this.isLoggedIn()) {
       if (loginBtn) loginBtn.style.display = "none";
-      if (userMenu) userMenu.style.display = "flex";
-      if (userName) userName.textContent = this.currentUser.name;
-      if (mobileOrdersBtn) mobileOrdersBtn.style.display = "block";
+      
+      if (isAdmin) {
+        // Hide standard user menu for admin on the main site
+        if (userMenu) userMenu.style.display = "none";
+        if (mobileOrdersBtn) mobileOrdersBtn.style.display = "none";
+      } else {
+        if (userMenu) userMenu.style.display = "flex";
+        if (userName) userName.textContent = this.currentUser.name;
+        if (mobileOrdersBtn) mobileOrdersBtn.style.display = "block";
+      }
     } else {
       if (loginBtn) loginBtn.style.display = "flex";
       if (userMenu) userMenu.style.display = "none";
