@@ -172,13 +172,10 @@ async function loadSiteAnnouncement() {
   if (!bar || !textEl || !window.supabaseClient) return;
 
   try {
-    const now = new Date().toISOString();
     const { data, error } = await window.supabaseClient
       .from("site_announcements")
       .select("*")
       .eq("active", true)
-      .or(`starts_at.is.null,starts_at.lte.${now}`)
-      .or(`ends_at.is.null,ends_at.gte.${now}`)
       .order("updated_at", { ascending: false })
       .limit(1)
       .maybeSingle();

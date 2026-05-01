@@ -123,11 +123,13 @@ DROP POLICY IF EXISTS "Anyone can read active announcements" ON public.site_anno
 CREATE POLICY "Anyone can read active announcements"
   ON public.site_announcements FOR SELECT
   TO anon, authenticated
-  USING (
-    active = true
-    AND (starts_at IS NULL OR starts_at <= NOW())
-    AND (ends_at IS NULL OR ends_at >= NOW())
-  );
+  USING (active = true);
+
+UPDATE public.site_announcements
+SET starts_at = NULL,
+    ends_at = NULL
+WHERE starts_at IS NOT NULL
+   OR ends_at IS NOT NULL;
 
 DROP POLICY IF EXISTS "Admins can read all announcements" ON public.site_announcements;
 CREATE POLICY "Admins can read all announcements"

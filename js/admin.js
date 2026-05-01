@@ -24,6 +24,7 @@ function bindAdminEvents() {
   document.getElementById("product-image-file")?.addEventListener("change", previewSelectedProductImage);
   document.getElementById("product-image-url")?.addEventListener("input", updateProductPreview);
   document.getElementById("announcement-form")?.addEventListener("submit", handleAnnouncementSubmit);
+  document.getElementById("announcement-remove-btn")?.addEventListener("click", removeAnnouncement);
 
   document.querySelectorAll(".admin-nav-btn").forEach((btn) => {
     btn.addEventListener("click", () => switchAdminView(btn.dataset.adminView));
@@ -430,20 +431,7 @@ async function loadAnnouncement() {
   adminState.announcement = data;
   document.getElementById("announcement-message-ar").value = data?.message_ar || "";
   document.getElementById("announcement-message-en").value = data?.message_en || "";
-  document.getElementById("announcement-starts-at").value = toDateTimeLocal(data?.starts_at);
-  document.getElementById("announcement-ends-at").value = toDateTimeLocal(data?.ends_at);
   document.getElementById("announcement-active").checked = Boolean(data?.active);
-}
-
-function toDateTimeLocal(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  const offset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
-}
-
-function fromDateTimeLocal(value) {
-  return value ? new Date(value).toISOString() : null;
 }
 
 async function handleAnnouncementSubmit(event) {
@@ -451,9 +439,9 @@ async function handleAnnouncementSubmit(event) {
   const payload = {
     message_ar: document.getElementById("announcement-message-ar").value.trim(),
     message_en: document.getElementById("announcement-message-en").value.trim(),
-    starts_at: fromDateTimeLocal(document.getElementById("announcement-starts-at").value),
-    ends_at: fromDateTimeLocal(document.getElementById("announcement-ends-at").value),
     active: document.getElementById("announcement-active").checked,
+    starts_at: null,
+    ends_at: null,
     updated_at: new Date().toISOString()
   };
 
@@ -469,6 +457,33 @@ async function handleAnnouncementSubmit(event) {
   }
 
   notificationSystem.success("تم حفظ رسالة الموسم");
+  await loadAnnouncement();
+}
+
+async function removeAnnouncement() {
+  if (!adminState.announcement?.id) {
+    document.getElementById("announcement-active").checked = false;
+    notificationSystem.success("تمت إزالة الرسالة من الصفحة");
+    return;
+  }
+
+  const { error } = await window.supabaseClient
+    .from("site_announcements")
+    .update({
+      active: false,
+      starts_at: null,
+      ends_at: null,
+      updated_at: new Date().toISOString()
+    })
+    .eq("id", adminState.announcement.id);
+
+  if (error) {
+    console.error("Remove announcement error:", error);
+    notificationSystem.error("تعذر إزالة الرسالة");
+    return;
+  }
+
+  notificationSystem.success("تمت إزالة الرسالة من الصفحة");
   await loadAnnouncement();
 }
 

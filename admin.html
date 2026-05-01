@@ -109,15 +109,12 @@
             <h2>رسالة تظهر أعلى الصفحة</h2>
             <label>الرسالة عربي<textarea class="admin-input" id="announcement-message-ar" required></textarea></label>
             <label>الرسالة إنجليزي<textarea class="admin-input" id="announcement-message-en"></textarea></label>
-            <div class="admin-form-grid">
-              <label>تاريخ البداية<input class="admin-input" id="announcement-starts-at" type="datetime-local"></label>
-              <label>تاريخ النهاية<input class="admin-input" id="announcement-ends-at" type="datetime-local"></label>
-            </div>
             <label class="admin-check-row">
               <input type="checkbox" id="announcement-active">
               <span>تفعيل الرسالة</span>
             </label>
             <button class="admin-primary-btn admin-full-btn" type="submit">حفظ الرسالة</button>
+            <button class="admin-ghost-btn admin-full-btn" id="announcement-remove-btn" type="button">إزالة الرسالة من الصفحة</button>
           </form>
         </section>
       </div>
