@@ -2,6 +2,7 @@
   min-height: 100vh;
   background: var(--bg-primary);
   color: var(--text-primary);
+  opacity: 1;
 }
 
 .admin-shell {
