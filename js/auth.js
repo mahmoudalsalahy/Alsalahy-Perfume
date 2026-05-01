@@ -105,9 +105,10 @@ class AuthSystem {
   }
 
   async login(email, password) {
+    const normalizedEmail = email.trim().toLowerCase();
     try {
       const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-        email: email.trim().toLowerCase(),
+        email: normalizedEmail,
         password
       });
 
@@ -118,7 +119,16 @@ class AuthSystem {
       return true;
     } catch (err) {
       console.error(err);
-      notificationSystem.error(err.message || i18n.t("notif_login_error"));
+      const message = (err.message || "").toLowerCase();
+
+      if (message.includes("email not confirmed")) {
+        await this.resendConfirmationEmail(normalizedEmail);
+        notificationSystem.warning(i18n.t("notif_login_email_not_confirmed"));
+      } else if (message.includes("email not found") || message.includes("user not found")) {
+        notificationSystem.error(i18n.t("notif_login_auth_user_missing"));
+      } else {
+        notificationSystem.error(err.message || i18n.t("notif_login_error"));
+      }
       
       const form = document.querySelector(".auth-form.active");
       if (form) {
@@ -126,6 +136,22 @@ class AuthSystem {
         setTimeout(() => form.classList.remove("shake"), 600);
       }
       return false;
+    }
+  }
+
+  async resendConfirmationEmail(email) {
+    try {
+      const { error } = await window.supabaseClient.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: window.location.origin + window.location.pathname
+        }
+      });
+
+      if (error) throw error;
+    } catch (err) {
+      console.error("Error resending confirmation email:", err);
     }
   }
 
