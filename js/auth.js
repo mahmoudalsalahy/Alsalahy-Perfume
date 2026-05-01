@@ -99,7 +99,13 @@ class AuthSystem {
       return true;
     } catch (err) {
       console.error(err);
-      notificationSystem.error(err.message || i18n.t("notif_register_error"));
+      const message = (err.message || "").toLowerCase();
+
+      if (this.isEmailRateLimitError(message)) {
+        notificationSystem.warning(i18n.t("notif_email_rate_limited"));
+      } else {
+        notificationSystem.error(err.message || i18n.t("notif_register_error"));
+      }
       return false;
     }
   }
@@ -122,8 +128,9 @@ class AuthSystem {
       const message = (err.message || "").toLowerCase();
 
       if (message.includes("email not confirmed")) {
-        await this.resendConfirmationEmail(normalizedEmail);
         notificationSystem.warning(i18n.t("notif_login_email_not_confirmed"));
+      } else if (this.isEmailRateLimitError(message)) {
+        notificationSystem.warning(i18n.t("notif_email_rate_limited"));
       } else if (message.includes("email not found") || message.includes("user not found")) {
         notificationSystem.error(i18n.t("notif_login_auth_user_missing"));
       } else {
@@ -139,20 +146,8 @@ class AuthSystem {
     }
   }
 
-  async resendConfirmationEmail(email) {
-    try {
-      const { error } = await window.supabaseClient.auth.resend({
-        type: "signup",
-        email,
-        options: {
-          emailRedirectTo: window.location.origin + window.location.pathname
-        }
-      });
-
-      if (error) throw error;
-    } catch (err) {
-      console.error("Error resending confirmation email:", err);
-    }
+  isEmailRateLimitError(message) {
+    return message.includes("rate limit") || message.includes("email rate") || message.includes("too many");
   }
 
   async loginWithGoogle() {
