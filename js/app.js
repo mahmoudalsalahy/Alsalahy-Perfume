@@ -79,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupOrdersModal();
   setupContactForm();
   setupMobileMenu();
+  loadSiteAnnouncement();
 
   // Reveal page immediately to prevent any perceived slowness or blank screen
   document.body.classList.add("loaded");
@@ -158,10 +159,46 @@ function setupLanguageToggle() {
 function updateDynamicContent() {
   // Re-render product cards
   renderProducts();
+  loadSiteAnnouncement();
   // Re-render cart if open
   if (cart.isOpen) cart.renderCartItems();
   // Update auth UI
   if (window.auth) auth.updateUI();
+}
+
+async function loadSiteAnnouncement() {
+  const bar = document.getElementById("site-announcement");
+  const textEl = document.getElementById("site-announcement-text");
+  if (!bar || !textEl || !window.supabaseClient) return;
+
+  try {
+    const now = new Date().toISOString();
+    const { data, error } = await window.supabaseClient
+      .from("site_announcements")
+      .select("*")
+      .eq("active", true)
+      .or(`starts_at.is.null,starts_at.lte.${now}`)
+      .or(`ends_at.is.null,ends_at.gte.${now}`)
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error || !data) {
+      bar.hidden = true;
+      return;
+    }
+
+    const lang = i18n.getCurrentLang();
+    const message = lang === "ar"
+      ? (data.message_ar || data.message_en)
+      : (data.message_en || data.message_ar);
+
+    textEl.textContent = message || "";
+    bar.hidden = !message;
+  } catch (err) {
+    bar.hidden = true;
+    console.error("Announcement load error:", err);
+  }
 }
 
 function getDiscountPercentage(currentPrice, originalPrice) {

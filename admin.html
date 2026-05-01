@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة الإدارة | ALSALAHY PERFUME</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body class="admin-body">
+  <main class="admin-shell">
+    <aside class="admin-sidebar">
+      <a href="index.html" class="admin-brand" aria-label="ALSALAHY PERFUME">
+        <img src="images/logo.png" alt="ALSALAHY PERFUME">
+      </a>
+      <nav class="admin-nav">
+        <button class="admin-nav-btn active" data-admin-view="orders">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          <span>الطلبات</span>
+        </button>
+        <button class="admin-nav-btn" data-admin-view="products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4 8 4 8-4z"/><path d="M4 7v10l8 4 8-4V7"/><path d="M12 11v10"/></svg>
+          <span>المنتجات</span>
+        </button>
+        <button class="admin-nav-btn" data-admin-view="announcement">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/></svg>
+          <span>رسالة الموسم</span>
+        </button>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <span id="admin-email"></span>
+        <button class="admin-ghost-btn" id="admin-logout-btn">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <section class="admin-main">
+      <div class="admin-topbar">
+        <div>
+          <p class="admin-kicker">ALSALAHY PERFUME</p>
+          <h1 id="admin-page-title">إدارة الطلبات</h1>
+        </div>
+        <button class="admin-primary-btn" id="admin-refresh-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-3-6.7"/><path d="M21 3v6h-6"/></svg>
+          تحديث
+        </button>
+      </div>
+
+      <section class="admin-login-panel" id="admin-login-panel">
+        <div class="admin-login-box">
+          <img src="images/logo.png" alt="ALSALAHY PERFUME">
+          <h2>دخول الإدارة</h2>
+          <form id="admin-login-form">
+            <label>البريد الإلكتروني</label>
+            <input class="admin-input" type="email" id="admin-login-email" required>
+            <label>كلمة المرور</label>
+            <input class="admin-input" type="password" id="admin-login-password" required>
+            <button class="admin-primary-btn admin-full-btn" type="submit">دخول</button>
+          </form>
+        </div>
+      </section>
+
+      <div class="admin-content" id="admin-content" hidden>
+        <section class="admin-view active" id="admin-view-orders">
+          <div class="admin-toolbar">
+            <select class="admin-input" id="orders-status-filter">
+              <option value="all">كل الطلبات</option>
+              <option value="pending_review">بانتظار مراجعة الدفع</option>
+              <option value="approved">تمت الموافقة</option>
+              <option value="rejected">مرفوض</option>
+            </select>
+          </div>
+          <div class="admin-list" id="admin-orders-list"></div>
+        </section>
+
+        <section class="admin-view" id="admin-view-products">
+          <div class="admin-products-layout">
+            <form class="admin-form-panel" id="product-form">
+              <input type="hidden" id="product-id">
+              <div class="admin-form-header">
+                <h2 id="product-form-title">إضافة منتج</h2>
+                <button type="button" class="admin-ghost-btn" id="product-new-btn">منتج جديد</button>
+              </div>
+              <div class="admin-form-grid">
+                <label>الاسم عربي<input class="admin-input" id="product-name-ar" required></label>
+                <label>الاسم إنجليزي<input class="admin-input" id="product-name-en" required></label>
+                <label>السعر بعد الخصم<input class="admin-input" id="product-price" type="number" min="0" required></label>
+                <label>السعر قبل الخصم<input class="admin-input" id="product-original-price" type="number" min="0"></label>
+              </div>
+              <label>الوصف عربي<textarea class="admin-input" id="product-desc-ar" required></textarea></label>
+              <label>الوصف إنجليزي<textarea class="admin-input" id="product-desc-en" required></textarea></label>
+              <label>المكونات عربي<input class="admin-input" id="product-notes-ar" required></label>
+              <label>المكونات إنجليزي<input class="admin-input" id="product-notes-en" required></label>
+              <div class="admin-form-grid">
+                <label>رابط الصورة<input class="admin-input" id="product-image-url"></label>
+                <label>رفع صورة<input class="admin-input" id="product-image-file" type="file" accept="image/*"></label>
+              </div>
+              <div class="admin-image-preview-wrap">
+                <img id="product-image-preview" alt="">
+              </div>
+              <button class="admin-primary-btn admin-full-btn" type="submit">حفظ المنتج</button>
+            </form>
+            <div class="admin-list" id="admin-products-list"></div>
+          </div>
+        </section>
+
+        <section class="admin-view" id="admin-view-announcement">
+          <form class="admin-form-panel admin-announcement-form" id="announcement-form">
+            <h2>رسالة تظهر أعلى الصفحة</h2>
+            <label>الرسالة عربي<textarea class="admin-input" id="announcement-message-ar" required></textarea></label>
+            <label>الرسالة إنجليزي<textarea class="admin-input" id="announcement-message-en"></textarea></label>
+            <div class="admin-form-grid">
+              <label>تاريخ البداية<input class="admin-input" id="announcement-starts-at" type="datetime-local"></label>
+              <label>تاريخ النهاية<input class="admin-input" id="announcement-ends-at" type="datetime-local"></label>
+            </div>
+            <label class="admin-check-row">
+              <input type="checkbox" id="announcement-active">
+              <span>تفعيل الرسالة</span>
+            </label>
+            <button class="admin-primary-btn admin-full-btn" type="submit">حفظ الرسالة</button>
+          </form>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabaseClient.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
