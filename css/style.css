@@ -2008,6 +2008,39 @@ textarea.order-input {
   color: var(--text-secondary);
 }
 
+.order-rejection-reason {
+  margin-top: 14px;
+  padding: 12px;
+  background: rgba(244, 67, 54, 0.05);
+  border-left: 3px solid var(--error);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  animation: slideDown 0.3s ease;
+}
+
+[dir="rtl"] .order-rejection-reason {
+  border-left: 0;
+  border-right: 3px solid var(--error);
+}
+
+.order-rejection-reason strong {
+  display: block;
+  color: var(--error);
+  margin-bottom: 4px;
+  font-weight: 700;
+}
+
+.order-rejection-reason p {
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ============================================
    AUTH MODAL
    ============================================ */

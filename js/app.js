@@ -653,6 +653,12 @@ function renderOrders(orders) {
         <div class="order-items-list">
           ${itemsHtml}
         </div>
+        ${(order.status === 'cancelled' && order.rejection_reason) ? `
+          <div class="order-rejection-reason">
+            <strong>${lang === 'ar' ? 'سبب الرفض:' : 'Rejection Reason:'}</strong>
+            <p>${order.rejection_reason}</p>
+          </div>
+        ` : ''}
         <div class="order-card-footer">
           <span class="order-total-label">الإجمالي</span>
           <span>${order.total} ${i18n.t("product_currency")}</span>
